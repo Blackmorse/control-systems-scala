@@ -24,10 +24,12 @@ class PdfParserTest extends AnyFunSuiteLike {
 
     println(result)
 
-    assert(result(aggregateKey) == "6")
-    assert(result(sensetiveKey) == "4,0 U/min/s")
-    assert(result(powerKey) == "2000 kW")
-    assert(result(maxAngleKey) == "-10,000 °")
+    assert(result.parameters(aggregateKey) == "6")
+    assert(result.parameters(sensetiveKey) == "4,0 U/min/s")
+    assert(result.parameters(powerKey) == "2000 kW")
+    assert(result.parameters(maxAngleKey) == "-10,000 °")
+
+    assert(result.number == 1579028)
   }
 
   test("test extract value") {
