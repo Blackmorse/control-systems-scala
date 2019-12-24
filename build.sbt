@@ -33,8 +33,11 @@ lazy val web = project
 
 lazy val global = project
   .in(file("."))
+  .enablePlugins(PlayScala)
   .settings(
-    assembleArtifact := false
+//    assembleArtifact := false
+    libraryDependencies ++= Seq(guice,
+      "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test)
   )
   .aggregate(
     model,
