@@ -13,8 +13,6 @@ class PdfParser(val parameters: Map[Int, ControlKey]) {
   private val pattern = Pattern.compile("^\\d{5}")
 
   def parse(inputArray: Array[Byte]) : Document = {
-
-
     (for (doc <- managed(PDDocument.load(inputArray))) yield {
       val data = mutable.Map[ControlKey, String]()
       val region = new Rectangle2D.Double(0, 270, 500, 500)

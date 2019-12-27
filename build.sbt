@@ -37,6 +37,9 @@ lazy val global = project
   .settings(
 //    assembleArtifact := false
     libraryDependencies ++= Seq(guice,
+      "com.typesafe.play" %% "play-slick" % "4.0.0",
+      "com.typesafe.play" %% "play-slick-evolutions" % "4.0.0",
+      "org.mariadb.jdbc" % "mariadb-java-client" % "2.4.1",
       "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test)
   )
   .aggregate(
