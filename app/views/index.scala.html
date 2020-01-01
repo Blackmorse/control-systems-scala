@@ -1,5 +1,14 @@
 @()
 
 @main("Control Systems") {
-  <h1>Welcome to Play!</h1>
+    @helper.form(action = routes.HomeController.upload, Symbol("enctype") -> "multipart/form-data") {
+
+    <input type="file" name="picture">
+
+    <p>
+        <input type="submit">
+    </p>
+    }
+
+<a href="@routes.HomeController.parameters()">Список всех параметров</a>
 }

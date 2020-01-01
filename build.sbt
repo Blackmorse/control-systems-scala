@@ -47,6 +47,7 @@ lazy val global = project
     pdf,
     web
   )
+  .dependsOn(pdf)
 
 lazy val assemblySettings = Seq(
   assemblyJarName in assembly := name.value + ".jar",

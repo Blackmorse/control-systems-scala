@@ -1,5 +1,5 @@
 # --- !Ups
-INSERT `parameters` (`id`, `unit`, `name`, `default_value`) VALUES
+INSERT `parameters` (`id`, `name`, `unit`, `default_value`) VALUES
 (10000,' Агрегат №', '', ''),
 (10001,' Тип двигателя', '', ''),
 (10002,' Версия двигателя', '', ''),

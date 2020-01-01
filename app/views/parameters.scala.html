@@ -1,0 +1,17 @@
+@(parameters: Seq[services.dao.Parameter])
+
+@main("All parameters") {
+
+    <a href="@routes.HomeController.index()">Главная</a>
+    <table>
+    @for(parameter <- parameters) {
+        <tr>
+            <td>@parameter.id</td>
+            <td>@parameter.name</td>
+            <td>@parameter.unit</td>
+            <td>@parameter.defaultValue</td>
+        </tr>
+    }
+
+    </table>
+}
