@@ -13,17 +13,17 @@ class ParametersDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   val parameters = TableQuery[ParametersTableDef]
 
-  def getAllParameters: Future[Seq[Parameter]] = dbConfig.db.run(parameters.result)
+  def getAllParameters: Future[Seq[ParameterEntity]] = dbConfig.db.run(parameters.result)
 
 }
 
-case class Parameter(id: Int, name: String, unit: String, defaultValue: String)
+case class ParameterEntity(id: Int, name: String, unit: String, defaultValue: String)
 
-class ParametersTableDef(tag: Tag) extends Table[Parameter](tag, "parameters") {
+class ParametersTableDef(tag: Tag) extends Table[ParameterEntity](tag, "parameters") {
   def id = column[Int]("id", O.PrimaryKey)
   def name = column[String]("name")
   def unit = column[String]("unit")
   def defaultValue = column[String]("default_value")
 
-  override def * = (id, name, unit, defaultValue) <> (Parameter.tupled, Parameter.unapply)
+  override def * = (id, name, unit, defaultValue) <> (ParameterEntity.tupled, ParameterEntity.unapply)
 }

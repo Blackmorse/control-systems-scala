@@ -3,11 +3,13 @@ package controllers
 import java.io.{FileInputStream, FileOutputStream}
 import java.nio.file.{Files, Paths}
 
+import com.blackmorse.controlsystem.model.ControlKey
 import com.blackmorse.controlsystem.pdf.PdfParser
 import javax.inject._
 import play.api._
 import play.api.mvc._
 import services.ParametersService
+import services.dao.DocumentsDAO
 
 import scala.concurrent.ExecutionContext
 
@@ -17,8 +19,14 @@ import scala.concurrent.ExecutionContext
  */
 @Singleton
 class HomeController @Inject()(val controllerComponents: ControllerComponents,
-                               val parametersService: ParametersService)
+                               val parametersService: ParametersService,
+                               val documentsDAO: DocumentsDAO)
                               (implicit executionContext: ExecutionContext)extends BaseController {
+
+  val pdfParaser = parametersService.getAllParameters
+//      .map()
+        .map(seq => seq.map(el => el.id -> ControlKey(el.id, el.name))).map(_.toMap).map(new PdfParser(_))
+
 
   /**
    * Create an Action to render an HTML page.
@@ -37,20 +45,22 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
 
   def upload = Action(parse.multipartFormData) { request =>
     request.body
-      .file("picture")
-      .map { picture =>
+      .file("file")
+      .map { file =>
         // only get the last part of the filename
         // otherwise someone can send a path like ../../home/foo/bar.txt to write to other files on the system
-        val filename    = Paths.get(picture.filename).getFileName
-        val fileSize    = picture.fileSize
-        val contentType = picture.contentType
+        val filename    = Paths.get(file.filename).getFileName
 
-        val path = Paths.get(s"/tmp/picture/tmp.file")
-        picture.ref.copyTo(path, replace = true)
+        val path = Paths.get(s"/tmp/tmp.file")
+        file.ref.copyTo(path, replace = true)
 
-//        new FileInputStream(picture.ref).r
-
-        println(Files.readAllBytes(path))
+        val bytes = Files.readAllBytes(path)
+        val doc = pdfParaser.map(parser => {
+          val document = parser.parse(bytes, filename.toString)
+          documentsDAO.insertDocument(document)
+        })
+//        println(doc.parameters)
+//        println(bytes)
 
 
         Ok("File uploaded")

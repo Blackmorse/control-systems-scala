@@ -20,7 +20,7 @@ class PdfParserTest extends AnyFunSuiteLike {
       23005 -> sensetiveKey,
       13101 -> powerKey,
       11508 -> maxAngleKey)
-    val result = new PdfParser(map).parse(arr)
+    val result = new PdfParser(map).parse(arr, "2214692_Penza_6_M6_Parametrs_RU_190509.pdf")
 
     println(result)
 
@@ -28,6 +28,9 @@ class PdfParserTest extends AnyFunSuiteLike {
     assert(result.parameters(sensetiveKey) == "4,0 U/min/s")
     assert(result.parameters(powerKey) == "2000 kW")
     assert(result.parameters(maxAngleKey) == "-10,000 °")
+
+    assert(result.name == "2214692_Penza_6_M6_Parametrs_RU")
+    assert(result.date == "190509")
 
     assert(result.number == 1579028)
   }

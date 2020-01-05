@@ -12,7 +12,8 @@ import scala.collection.mutable
 class PdfParser(val parameters: Map[Int, ControlKey]) {
   private val pattern = Pattern.compile("^\\d{5}")
 
-  def parse(inputArray: Array[Byte]) : Document = {
+  def parse(inputArray: Array[Byte], fileName: String) : Document = {
+    val (name, date) = PdfParser.parseName(fileName)
     (for (doc <- managed(PDDocument.load(inputArray))) yield {
       val data = mutable.Map[ControlKey, String]()
       val region = new Rectangle2D.Double(0, 270, 500, 500)
@@ -51,7 +52,7 @@ class PdfParser(val parameters: Map[Int, ControlKey]) {
         }
       }
       (docNumber, data)
-    }).acquireAndGet{case(docNumber, parameters) => Document(docNumber, parameters.toMap)}
+    }).acquireAndGet{case(docNumber, parameters) => Document(docNumber, parameters.toMap, name, date)}
   }
 }
 
@@ -68,4 +69,7 @@ object PdfParser {
     s.substring(valueIndex, s.length)
   }
 
+  def parseName(fileName: String): (String, String) = {
+    (fileName.substring(0, fileName.length - 11), fileName.substring(fileName.length - 10, fileName.length - 4))
+  }
 }
