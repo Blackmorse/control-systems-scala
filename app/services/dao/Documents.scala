@@ -7,7 +7,7 @@ import slick.jdbc.JdbcProfile
 import slick.jdbc.MySQLProfile.api._
 import slick.lifted.Tag
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class DocumentsDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
                             (implicit executionContext: ExecutionContext) extends HasDatabaseConfigProvider[JdbcProfile] {
@@ -16,6 +16,16 @@ class DocumentsDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   def insertDocument(document: Document) = {
     val documentEntity = DocumentEntity(0, document.number, document.name, document.date)
     dbConfig.db.run(documents += documentEntity)
+  }
+
+  def deleteDocumentByName(name: String): Future[Option[DocumentEntity]] = {
+   dbConfig.db.run( documents.filter(_.name === name).take(1).result)
+     .map(s => if (s.length == 1) Some(s.head) else None)
+      .map(oldDocOpt => oldDocOpt.map(oldDoc => {
+        println(oldDoc.id)
+        dbConfig.db.run(documents.filter(_.id === oldDoc.id).delete)
+        oldDoc
+      }))
   }
 }
 
