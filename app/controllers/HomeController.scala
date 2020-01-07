@@ -9,7 +9,7 @@ import javax.inject._
 import play.api._
 import play.api.mvc._
 import services.ParametersService
-import services.dao.DocumentsDAO
+import services.dao.{DocumentParametersDAO, DocumentsDAO}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -20,7 +20,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class HomeController @Inject()(val controllerComponents: ControllerComponents,
                                val parametersService: ParametersService,
-                               val documentsDAO: DocumentsDAO)
+                               val documentsDAO: DocumentsDAO,
+                               val documentParametersDAO: DocumentParametersDAO)
                               (implicit executionContext: ExecutionContext) extends BaseController {
 
   val pdfParser = parametersService.getAllParameters
@@ -47,22 +48,25 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
       .file("file")
       .map { file =>
         val filename = Paths.get(file.filename).getFileName
-
+        //TODO in-memory
         val path = Paths.get(s"/tmp/tmp.file")
         file.ref.copyTo(path, replace = true)
 
         val bytes = Files.readAllBytes(path)
 
-       pdfParser.flatMap(parser => {
+        pdfParser.flatMap(parser => {
           val document = parser.parse(bytes, filename.toString)
-          println(document.name)
-          (for (oldDocumentOption <- documentsDAO.deleteDocumentByName(document.name);
-                         _ <- documentsDAO.insertDocument(document)
+          val oldDocumentFuture = documentsDAO.getDocumentByName(document.name)
 
-          ) yield {
-            val title = for (oldDocument <- oldDocumentOption) yield s"Replaces old document ${oldDocument.name} with date ${oldDocument.date}"
-            title.getOrElse("New Document Uploaded")
-
+          oldDocumentFuture.flatMap({
+            case Some(oldDocument) => for(_ <- documentParametersDAO.deleteDocumentParameters(oldDocument.id);
+                                          _ <- documentsDAO.deleteDocumentById(oldDocument.id);
+                                          newDocumentId <- documentsDAO.insertDocument(document);
+                                          _ <- documentParametersDAO.addParametersToDocument(document.parameters, newDocumentId)
+                                      ) yield s"Replaces old document ${oldDocument.name} with date ${oldDocument.date}"
+            case None => for(newDocumentId <- documentsDAO.insertDocument(document);
+                             _ <- documentParametersDAO.addParametersToDocument(document.parameters, newDocumentId) )
+                            yield "New Document Uploaded"
           }).map(Ok(_))
         })
       }

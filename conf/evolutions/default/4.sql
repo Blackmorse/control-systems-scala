@@ -1,6 +1,6 @@
 # --- !Ups
 create table `document_parameters` (
-    `id` INT NOT NULL AUTO_INCREMENT,
+    `id` BIGINT NOT NULL AUTO_INCREMENT,
     `document_id` INT NOT NULL,
     `parameter_id` INT NOT NULL,
     `parameter_value` text,
