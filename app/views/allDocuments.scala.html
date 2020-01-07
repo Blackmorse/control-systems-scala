@@ -1,0 +1,23 @@
+@(documents: Seq[services.dao.DocumentEntity])
+
+@main("All documents") {
+    <a href="@routes.HomeController.index()">Главная</a>
+    <table>
+        <tr>
+            <th>Номер</th>
+            <th>Имя</th>
+            <th>Дата</th>
+            <th></th>
+        </tr>
+
+        @for(document <- documents) {
+            <tr>
+                <td>@document.number</td>
+                <td>@document.name</td>
+                <td>@document.date</td>
+                <td><a href="@routes.HomeController.document(document.id)">Открыть</a></td>
+            </tr>
+        }
+
+    </table>
+}

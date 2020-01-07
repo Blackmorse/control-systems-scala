@@ -65,4 +65,8 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
     parametersService.getDocument(id)
       .map(document => Ok(views.html.document(document, None)))
   }
+
+  def allDocuments() = Action.async { implicit request =>
+    documentsDAO.getAllDocuments().map(seq => Ok(views.html.allDocuments(seq)))
+  }
 }

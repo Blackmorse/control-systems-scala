@@ -4,7 +4,8 @@
     @titleMessage.getOrElse("")
     <h3>@document.number : @document.name @document.date</h3>
 
-    <a href="@routes.HomeController.index()">Главная</a>
+    <a href="@routes.HomeController.index()">Главная</a><br>
+    <a href="@routes.HomeController.allDocuments()">Список всех документов</a>
     <table>
         <tr>
             <th>Номер</th>

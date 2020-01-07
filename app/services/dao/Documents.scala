@@ -27,6 +27,9 @@ class DocumentsDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   def deleteDocumentById(id: Int) =
     dbConfig.db.run( documents.filter(_.id === id).delete )
+
+  def getAllDocuments(): Future[Seq[DocumentEntity]] =
+    dbConfig.db.run(documents.result)
 }
 
 case class DocumentEntity(id: Int, number: Int, name: String, date:String)
