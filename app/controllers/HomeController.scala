@@ -1,12 +1,9 @@
 package controllers
 
-import java.io.{FileInputStream, FileOutputStream}
 import java.nio.file.{Files, Paths}
 
-import com.blackmorse.controlsystem.model.ControlKey
 import com.blackmorse.controlsystem.pdf.PdfParser
 import javax.inject._
-import play.api._
 import play.api.mvc._
 import services.ParametersService
 import services.dao.{DocumentParametersDAO, DocumentsDAO}
@@ -24,8 +21,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
                                val documentParametersDAO: DocumentParametersDAO)
                               (implicit executionContext: ExecutionContext) extends BaseController {
 
-  val pdfParser = parametersService.getAllParameters
-    .map(seq => seq.map(el => el.id -> ControlKey(el.id, el.name))).map(_.toMap).map(new PdfParser(_))
+  private val pdfParser = parametersService.getAllControlKeys.map(new PdfParser(_))
 
 
   /**
@@ -56,20 +52,17 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
 
         pdfParser.flatMap(parser => {
           val document = parser.parse(bytes, filename.toString)
-          val oldDocumentFuture = documentsDAO.getDocumentByName(document.name)
 
-          oldDocumentFuture.flatMap({
-            case Some(oldDocument) => for(_ <- documentParametersDAO.deleteDocumentParameters(oldDocument.id);
-                                          _ <- documentsDAO.deleteDocumentById(oldDocument.id);
-                                          newDocumentId <- documentsDAO.insertDocument(document);
-                                          _ <- documentParametersDAO.addParametersToDocument(document.parameters, newDocumentId)
-                                      ) yield s"Replaces old document ${oldDocument.name} with date ${oldDocument.date}"
-            case None => for(newDocumentId <- documentsDAO.insertDocument(document);
-                             _ <- documentParametersDAO.addParametersToDocument(document.parameters, newDocumentId) )
-                            yield "New Document Uploaded"
-          }).map(Ok(_))
+          parametersService.updateDocument(document)
+            .map{case(id, msg) => Ok(views.html.document(document, Some(msg)))}
         })
       }
-      .getOrElse(Future(Ok("Some error")))
+      .getOrElse(Future(InternalServerError("Some error")))
+
+  }
+
+  def document(id: Int) = Action.async { implicit request =>
+    parametersService.getDocument(id)
+      .map(document => Ok(views.html.document(document, None)))
   }
 }

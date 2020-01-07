@@ -7,10 +7,11 @@ import slick.jdbc.JdbcProfile
 import slick.jdbc.MySQLProfile.api._
 import slick.lifted.Tag
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 class DocumentParametersDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
                                      (implicit executionContext: ExecutionContext) extends HasDatabaseConfigProvider[JdbcProfile] {
   val documentParameters = TableQuery[DocumentParametersTableDef]
+  def getDbConfig = dbConfig
 
   def addParametersToDocument(parameters: Map[ControlKey, String], documentId: Int) = {
     val documentParameterEntities = parameters.map{case(key, value) => DocumentParameterEntity(0, documentId, key.code, value)}
@@ -19,6 +20,9 @@ class DocumentParametersDAO @Inject()(protected val dbConfigProvider: DatabaseCo
 
   def deleteDocumentParameters(documentId: Int) =
     dbConfig.db.run(documentParameters.filter(_.documentId === documentId).delete)
+
+  def getDocumentParameters(documentId: Int): Future[Seq[DocumentParameterEntity]] =
+    dbConfig.db.run(documentParameters.filter(_.documentId === documentId).result)
 }
 
 case class DocumentParameterEntity(id: Long, documentId: Int, parameterId: Int, value: String)

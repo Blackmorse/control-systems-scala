@@ -1,0 +1,22 @@
+@(document: com.blackmorse.controlsystem.model.Document, titleMessage: Option[String])
+
+@main(s"Document: ${document.name}") {
+    @titleMessage.getOrElse("")
+    <h3>@document.number : @document.name @document.date</h3>
+
+    <a href="@routes.HomeController.index()">Главная</a>
+    <table>
+        <tr>
+            <th>Номер</th>
+            <th>Название</th>
+            <th>Значение</th>
+        </tr>
+        @for(parameter <- document.parameters.toSeq.sortBy(_._1.code)) {
+            <tr>
+                <td>@parameter._1.code</td>
+                <td>@parameter._1.name</td>
+                <td>@parameter._2</td>
+            </tr>
+        }
+    </table>
+}

@@ -15,13 +15,15 @@ class DocumentsDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   def insertDocument(document: Document) = {
     val documentEntity = DocumentEntity(0, document.number, document.name, document.date)
-//    dbConfig.db.run(documents += documentEntity)
     dbConfig.db.run((documents returning documents.map(_.id) ) += documentEntity)
   }
 
   def getDocumentByName(name: String): Future[Option[DocumentEntity]] =
     dbConfig.db.run( documents.filter(_.name === name).take(1).result )
-      .map(s => if (s.length == 1) Some(s.head) else None)
+      .map(_.headOption)
+
+  def getDocumentById(id: Int): Future[Option[DocumentEntity]] =
+    dbConfig.db.run( documents.filter(_.id === id).result ).map(_.headOption)
 
   def deleteDocumentById(id: Int) =
     dbConfig.db.run( documents.filter(_.id === id).delete )

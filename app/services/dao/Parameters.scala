@@ -13,7 +13,7 @@ class ParametersDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   val parameters = TableQuery[ParametersTableDef]
 
-  lazy val getAllParameters: Future[Seq[ParameterEntity]] = dbConfig.db.run(parameters.result)
+  def getAllParameters: Future[Seq[ParameterEntity]] = dbConfig.db.run(parameters.result)
 }
 
 case class ParameterEntity(id: Int, name: String, unit: String, defaultValue: String)
