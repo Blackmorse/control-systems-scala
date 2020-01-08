@@ -1,8 +1,7 @@
-@(parameters: Seq[services.dao.Parameter])
+@(parameters: Seq[services.dao.ParameterEntity])
 
 @main("All parameters") {
 
-    <a href="@routes.HomeController.index()">Главная</a>
     <table>
     @for(parameter <- parameters) {
         <tr>

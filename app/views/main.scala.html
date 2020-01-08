@@ -15,6 +15,14 @@
 
     </head>
     <body>
+    <table id="headerTable">
+        <tr>
+            <td><a href="@routes.HomeController.index()">Загрузка</a></td>
+            <td><a href="@routes.HomeController.allDocuments()">Документы</a></td>
+            <td><a href="@routes.HomeController.parameters()">Параметры</a></td>
+        </tr>
+    </table>
+
     @content
       <script src="@routes.Assets.versioned("javascripts/main.js")" type="text/javascript"></script>
 
