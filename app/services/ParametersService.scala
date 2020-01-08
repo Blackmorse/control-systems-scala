@@ -2,7 +2,8 @@ package services
 
 import com.blackmorse.controlsystem.model.{ControlKey, Document}
 import javax.inject.Inject
-import services.dao.{DocumentParametersDAO, DocumentsDAO, ParametersDAO}
+import services.dao.{DocumentEntity, DocumentParametersDAO, DocumentsDAO, ParametersDAO}
+import slick.jdbc.MySQLProfile.api._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -41,5 +42,18 @@ class ParametersService @Inject() (val parametersDAO: ParametersDAO,
         }).map(_.toMap)
           .map(parametersMap => Document(documentEntity.number, parametersMap, documentEntity.name, documentEntity.date))
       }
+  }
+
+  def getAllDocuments(): Future[Seq[DocumentEntity]] = documentsDAO.getAllDocuments()
+
+  def getDocumentsByParameters(firstParameterId: Int, firstParameterValue: String,
+                               secondParameterId: Int, secondParameterValue: String): Future[Seq[DocumentEntity]] = {
+    documentParametersDAO.getDbConfig.db.run(
+      documentsDAO.documents.filter(_.id in
+        documentParametersDAO.documentParameters.filter(_.documentId in
+           documentParametersDAO.documentParameters.filter(_.parameterId === firstParameterId).filter(_.parameterValue === firstParameterValue).map(_.documentId)
+        ).filter(_.parameterId === secondParameterId).filter(_.parameterValue === secondParameterValue).map(_.documentId)
+      ).result
+    )
   }
 }

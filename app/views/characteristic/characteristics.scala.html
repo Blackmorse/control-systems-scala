@@ -1,0 +1,36 @@
+@(parameters: Seq[services.dao.ParameterEntity], characteristicsForm: Form[controllers.CharacteristicsForm])(implicit messages: Messages)
+
+@import helper._
+@import helpers.FieldHelpers._
+
+@main("Характеристики") {
+    @helper.form(routes.CharacteristicsController.searchCharacteristics) {
+
+        <table>
+            <tr>
+                <td>
+                    @select(characteristicsForm("firstParameterId"),
+                        parameters.map(p => p.id.toString -> p.name),
+                        '_label -> "Характеристика",
+                        '_help -> "Выберите характеристику")
+                </td>
+                <td>
+                    @inputText(characteristicsForm("firstParameterValue"), '_label -> "Значение")
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @select(characteristicsForm("secondParameterId"),
+                        parameters.map(p => p.id.toString -> p.name),
+                        '_label -> "Характеристика",
+                        '_help -> "Выберите характеристику")
+                </td>
+                <td>
+                    @inputText(characteristicsForm("secondParameterValue"), '_label -> "Значение")
+                </td>
+            </tr>
+
+        </table>
+        <input type="submit" value="Искать">
+    }
+}

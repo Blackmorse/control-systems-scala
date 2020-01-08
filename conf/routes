@@ -9,6 +9,10 @@ POST    /                           controllers.HomeController.upload()
 GET     /parameters                 controllers.HomeController.parameters()
 GET     /document                   controllers.HomeController.document(id: Int)
 GET     /allDocuments               controllers.HomeController.allDocuments()
+GET     /characteristics            controllers.CharacteristicsController.characteristics
+POST    /searchCharacteristics      controllers.CharacteristicsController.searchCharacteristics
+GET     /searchCharacteristicsResult controllers.CharacteristicsController.characteristicsResult(firstParameterId: Int, firstParameterValue: String, secondParameterId: Int, secondParameterValue: String)
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

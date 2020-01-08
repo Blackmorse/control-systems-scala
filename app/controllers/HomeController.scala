@@ -6,7 +6,6 @@ import com.blackmorse.controlsystem.pdf.PdfParser
 import javax.inject._
 import play.api.mvc._
 import services.ParametersService
-import services.dao.{DocumentParametersDAO, DocumentsDAO}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -16,9 +15,7 @@ import scala.concurrent.{ExecutionContext, Future}
   */
 @Singleton
 class HomeController @Inject()(val controllerComponents: ControllerComponents,
-                               val parametersService: ParametersService,
-                               val documentsDAO: DocumentsDAO,
-                               val documentParametersDAO: DocumentParametersDAO)
+                               val parametersService: ParametersService)
                               (implicit executionContext: ExecutionContext) extends BaseController {
 
   private val pdfParser = parametersService.getAllControlKeys.map(new PdfParser(_))
@@ -67,6 +64,6 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
   }
 
   def allDocuments() = Action.async { implicit request =>
-    documentsDAO.getAllDocuments().map(seq => Ok(views.html.allDocuments(seq)))
+    parametersService.getAllDocuments().map(seq => Ok(views.html.allDocuments(seq)))
   }
 }
