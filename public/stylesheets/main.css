@@ -15,3 +15,7 @@
 #plot {
     width: 700px;
 }
+
+.errors {
+    color: red;
+}

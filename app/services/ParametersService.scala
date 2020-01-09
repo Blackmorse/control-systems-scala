@@ -49,10 +49,13 @@ class ParametersService @Inject() (val parametersDAO: ParametersDAO,
   def getDocumentsByParameters(firstParameterId: Int, firstParameterValue: String,
                                secondParameterId: Int, secondParameterValue: String): Future[Seq[DocumentEntity]] = {
     documentParametersDAO.getDbConfig.db.run(
-      documentsDAO.documents.filter(_.id in
-        documentParametersDAO.documentParameters.filter(_.documentId in
-           documentParametersDAO.documentParameters.filter(_.parameterId === firstParameterId).filter(_.parameterValue === firstParameterValue).map(_.documentId)
-        ).filter(_.parameterId === secondParameterId).filter(_.parameterValue === secondParameterValue).map(_.documentId)
+      documentsDAO.documents.filter(_.id in {
+        if(secondParameterValue.trim.isEmpty)
+          documentParametersDAO.documentParameters
+        else documentParametersDAO.documentParameters.filter(_.documentId in
+          documentParametersDAO.documentParameters.filter(_.parameterId === secondParameterId).filter(_.parameterValue === secondParameterValue).map(_.documentId))
+      }
+         .filter(_.parameterId === firstParameterId).filter(_.parameterValue === firstParameterValue).map(_.documentId)
       ).result
     )
   }

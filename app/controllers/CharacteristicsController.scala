@@ -8,7 +8,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{BaseController, ControllerComponents}
 import services.ParametersService
 import services.dao.DocumentEntity
-
+import play.api.data.validation.Constraints._
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -35,7 +35,8 @@ class CharacteristicsController @Inject()(val controllerComponents: ControllerCo
 
   def searchCharacteristics = Action.async { implicit request =>
     CharacteristicsForm.form.bindFromRequest().fold(
-      _ => Future.successful(Ok("Error")),
+      formWithErrors => parametersService.getAllParameters.map(parameters =>
+        BadRequest(views.html.characteristic.characteristics(parameters, formWithErrors))),//Future.successful(Ok("Error")),
       data => Future.successful(Redirect(routes.CharacteristicsController.characteristicsResult(
         data.firstParameterId, data.firstParameterValue, data.secondParameterId, data.secondParameterValue)))
     )
@@ -49,59 +50,28 @@ class CharacteristicsController @Inject()(val controllerComponents: ControllerCo
       yield Ok(views.html.characteristic.charasteristicsResult(documents, characteristicChart))
   }
 
-//  private def chartsData(documentEntities: Seq[DocumentEntity]) /*: Future[Map[DocumentEntity, (CharacteristicChart, CharacteristicChart)]]*/ = {
-  //    val allParameterIds = firstPercents ++ firstTemperatures ++ secondPercents ++ secondTemperatures ++ thirdPercents ++ thirdTemperatures ++ Seq(characteristicsParameter)
-  //
-  //    val documentEntitiesMap = documentEntities.map(de => de.id -> de).toMap
-  //
-  //    val allParameters = parametersService.getDocumentsParameters(documentEntities.map(_.id), allParameterIds)
-  //
-  //    allParameters.map(documentParameterEntities => {
-  //      documentParameterEntities.groupBy(_.documentId).map { case (docId, listParameters) => {
-  //        val charParameter = listParameters.find(_.parameterId == characteristicsParameter).getOrElse(throw new RuntimeException("No charactiristics parameter at the document"))
-  //
-  //        val (temperatureParameters, percentsParameters) =
-  //          if (charParameter.value == "1") {
-  //            (firstTemperatures, firstPercents)
-  //          } else if (charParameter.value == "2") {
-  //            (secondTemperatures, secondPercents)
-  //          } else if (charParameter.value == "3") {
-  //            (thirdTemperatures, thirdPercents)
-  //          } else {
-  //            throw new RuntimeException(s"Unknown characteristic number ${charParameter.value}")
-  //          }
-  //
-  //        val listParametersMap = listParameters.map(lp => lp.parameterId -> lp.value).toMap
-  //
-  //        documentEntitiesMap(docId) -> (CharacteristicChart(temperatureParameters.map(temperatureId => listParametersMap(temperatureId))),
-  //          CharacteristicChart(percentsParameters.map(percentId => listParametersMap(percentId))))
-  //      }
-  //      }
-  //    })
-  //  }
+  def chart(documentEntities: Seq[DocumentEntity]) = {
 
-    def chart(documentEntities: Seq[DocumentEntity]) = {
+    val allParameterIds = firstPercents ++ firstTemperatures ++ secondPercents ++ secondTemperatures ++ thirdPercents ++ thirdTemperatures ++ Seq(characteristicsParameter)
+    val allParameters = parametersService.getDocumentsParameters(documentEntities.map(_.id), allParameterIds)
 
-      val allParameterIds = firstPercents ++ firstTemperatures ++ secondPercents ++ secondTemperatures ++ thirdPercents ++ thirdTemperatures ++ Seq(characteristicsParameter)
-      val allParameters = parametersService.getDocumentsParameters(documentEntities.map(_.id), allParameterIds)
+    val documentEntitiesMap = documentEntities.map(de => de.id -> de).toMap
 
-      val documentEntitiesMap = documentEntities.map(de => de.id -> de).toMap
+    allParameters.map(_.groupBy(_.documentId).map { case (docId, listParameters) => {
+      val document = documentEntitiesMap(docId)
+      val characteristicParameter = listParameters.find(_.parameterId == characteristicsParameter).getOrElse(throw new RuntimeException("No characteristics parameter at the document"))
 
-      allParameters.map(_.groupBy(_.documentId).map { case (docId, listParameters) => {
-        val document = documentEntitiesMap(docId)
-        val characteristicParameter = listParameters.find(_.parameterId == characteristicsParameter).getOrElse(throw new RuntimeException("No characteristics parameter at the document"))
+      val (temperatureParameters, percentsParameters) = getActualParameters(characteristicParameter.value)
 
-        val (temperatureParameters, percentsParameters) = getActualParameters(characteristicParameter.value)
+      val listParametersMap = listParameters.map(lp => lp.parameterId -> lp.value).toMap
 
-        val listParametersMap = listParameters.map(lp => lp.parameterId -> lp.value).toMap
+      val temperatures = temperatureParameters.map(temperatureId => convertTemperature(listParametersMap(temperatureId)))
+      val percents = percentsParameters.map(percentId => convertPercent(listParametersMap(percentId)))
 
-        val temperatures = temperatureParameters.map(temperatureId => convertTemperature(listParametersMap(temperatureId)))
-        val percents = percentsParameters.map(percentId => convertPercent(listParametersMap(percentId)))
-
-        DocumentChart(document, percents, temperatures)
-      }
-      }).map(documentCharts => CharacteristicChart(documentCharts.toSeq))
+      DocumentChart(document, percents, temperatures)
     }
+    }).map(documentCharts => CharacteristicChart(documentCharts.toSeq))
+  }
 
 
   private def getActualParameters(value: String) =
@@ -140,7 +110,7 @@ object CharacteristicsForm {
   val form: Form[CharacteristicsForm] = Form(
     mapping(
       "firstParameterId" -> number,
-      "firstParameterValue" -> text,
+      "firstParameterValue" -> text.verifying(nonEmpty),
       "secondParameterId" -> number,
       "secondParameterValue" -> text
     )(CharacteristicsForm.apply)(CharacteristicsForm.unapply)
