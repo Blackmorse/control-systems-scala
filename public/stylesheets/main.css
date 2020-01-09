@@ -3,3 +3,11 @@
      width: 400px;
      margin-bottom: 20px
 }
+
+.parametersTable tbody td {
+    border: 1px solid black;
+}
+
+.documentList tbody td {
+    border: 1px solid black;
+}

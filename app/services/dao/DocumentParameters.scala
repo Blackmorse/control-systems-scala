@@ -23,6 +23,12 @@ class DocumentParametersDAO @Inject()(protected val dbConfigProvider: DatabaseCo
 
   def getDocumentParameters(documentId: Int): Future[Seq[DocumentParameterEntity]] =
     dbConfig.db.run(documentParameters.filter(_.documentId === documentId).result)
+
+  def getDocumentsParameters(documentIds: Seq[Int], parameterIds: Seq[Int]): Future[Seq[DocumentParameterEntity]] = {
+    dbConfig.db.run(
+      documentParameters.filter(_.documentId inSet documentIds).filter(_.parameterId inSet parameterIds).result
+    )
+  }
 }
 
 case class DocumentParameterEntity(id: Long, documentId: Int, parameterId: Int, value: String)

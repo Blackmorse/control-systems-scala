@@ -1,5 +1,23 @@
-@(documents: Seq[services.dao.DocumentEntity])
+@(documents: Seq[services.dao.DocumentEntity], charts: Map[services.dao.DocumentEntity, (controllers.CharacteristicChart, controllers.CharacteristicChart)])
 
 @main("Documents") {
+    Найденные документы:
     @common.documentList(documents)
+    <br>
+    Таблица со значениями:
+    <table class="parametersTable">
+        @for((document, (tempChart, percChart)) <- charts) {
+        <tr>
+            <td rowspan="2">@document.name</td>
+            @for(value <- tempChart.data) {
+            <td>@value</td>
+            }
+        </tr>
+        <tr>
+            @for(value <- percChart.data) {
+            <td>@value</td>
+            }
+        </tr>
+        }
+    </table>
 }

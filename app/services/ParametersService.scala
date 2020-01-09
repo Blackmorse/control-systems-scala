@@ -56,4 +56,8 @@ class ParametersService @Inject() (val parametersDAO: ParametersDAO,
       ).result
     )
   }
+
+  def getDocumentsParameters(documentIds: Seq[Int], parameterIds: Seq[Int]) = {
+    documentParametersDAO.getDocumentsParameters(documentIds, parameterIds)
+  }
 }
