@@ -1,23 +1,56 @@
-@(documents: Seq[services.dao.DocumentEntity], charts: Map[services.dao.DocumentEntity, (controllers.CharacteristicChart, controllers.CharacteristicChart)])
+@import play.api.libs.json.Json
+@(documents: Seq[services.dao.DocumentEntity], charts: controllers.CharacteristicChart)
 
 @main("Documents") {
+    <script src='https://cdn.plot.ly/plotly-latest.min.js' ></script>
     Найденные документы:
     @common.documentList(documents)
     <br>
     Таблица со значениями:
     <table class="parametersTable">
-        @for((document, (tempChart, percChart)) <- charts) {
+        @for(documentChart <- charts.documentCharts) {
         <tr>
-            <td rowspan="2">@document.name</td>
-            @for(value <- tempChart.data) {
-            <td>@value</td>
+            <td rowspan="2">@documentChart.documentEntity.name</td>
+            @for(temperature <- documentChart.temperatures) {
+            <td>@temperature</td>
             }
         </tr>
         <tr>
-            @for(value <- percChart.data) {
-            <td>@value</td>
+            @for(percent <- documentChart.percents) {
+            <td>@percent</td>
             }
         </tr>
         }
     </table>
 }
+    <span id="data" pr="@Json.toJson(charts)"></span>
+<div id="plot" width="300"></div>
+    <script>
+        var a = document.getElementById("data").getAttribute("pr")
+        var charts = JSON.parse(a)
+
+        <!--alert(charts)-->
+
+        var traces = new Array(charts.documentCharts.length)
+
+        for (i = 0 ; i < charts.documentCharts.length; i++) {
+          var trace = {
+            name: charts.documentCharts[i].documentEntity.name,
+            x: charts.documentCharts[i].percents,
+            y: charts.documentCharts[i].temperatures,
+            type: 'scatter'
+          }
+          traces[i] = trace
+        }
+
+        var layout = {
+          showlegend: true,
+	      legend: {
+	        "orientation": "h"
+	      }
+	    };
+
+       Plotly.newPlot('plot', traces, layout);
+
+    </script>
+

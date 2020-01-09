@@ -3,6 +3,7 @@ package services.dao
 import com.blackmorse.controlsystem.model.Document
 import com.google.inject.Inject
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
+import play.api.libs.json.Json
 import slick.jdbc.JdbcProfile
 import slick.jdbc.MySQLProfile.api._
 import slick.lifted.Tag
@@ -33,6 +34,11 @@ class DocumentsDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 }
 
 case class DocumentEntity(id: Int, number: Int, name: String, date:String)
+
+object DocumentEntity {
+  implicit val writes = Json.writes[DocumentEntity]
+  def tupled = (DocumentEntity.apply _).tupled
+}
 
 class DocumentsTableDef(tag: Tag) extends Table[DocumentEntity](tag, "documents") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)

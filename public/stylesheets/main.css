@@ -11,3 +11,7 @@
 .documentList tbody td {
     border: 1px solid black;
 }
+
+#plot {
+    width: 700px;
+}
