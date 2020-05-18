@@ -22,9 +22,10 @@
         </tr>
         }
     </table>
-}
     <span id="data" pr="@Json.toJson(charts)"></span>
-<div id="plot" width="300"></div>
+    <div id="plot" ></div>
+}
+    
     <script>
         var a = document.getElementById("data").getAttribute("pr")
         var charts = JSON.parse(a)
