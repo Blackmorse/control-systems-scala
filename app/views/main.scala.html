@@ -4,13 +4,14 @@
  * two arguments, a `String` for the title of the page and an `Html`
  * object to insert into the body of the page.
  *@
-@(title: String)(content: Html)
+@(title: String)(content: Html)(scripts: Html)
 
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <title>@title</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/documentsCompare.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
 
     </head>
@@ -18,7 +19,7 @@
         <div class="main_div">
             <header id="headerTable">
 	            <span class="header_caption"><a href="@routes.HomeController.index()">Загрузка</a></span>
-                <span class="header_caption"><a href="@routes.HomeController.allDocuments()">Документы</a></span>
+                <span class="header_caption"><a href="@routes.DocumentsController.allDocuments()">Документы</a></span>
                 <span class="header_caption"><a href="@routes.HomeController.parameters()">Параметры</a></span>
 	            <span class="header_caption"><a href="@routes.CharacteristicsController.characteristics">Характеристики</a></span>
             </header>
@@ -29,5 +30,11 @@
         </div>
         <script src="@routes.Assets.versioned("javascripts/main.js")" type="text/javascript"></script>
 
+        <script src="https://unpkg.com/react@@16/umd/react.development.js" crossorigin></script>
+        <script src="https://unpkg.com/react-dom@@16/umd/react-dom.development.js" crossorigin></script>
+        <script src="https://unpkg.com/babel-standalone@@6.26.0/babel.min.js" crossorigin></script>
+
+        @scripts
+@*        <script src="@routes.Assets.versioned("react/documentList.js")" type="text/babel"></script>*@
     </body>
 </html>

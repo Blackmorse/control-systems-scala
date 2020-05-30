@@ -49,3 +49,7 @@
 .errors {
     color: red;
 }
+
+.value {
+    text-align: center;
+}

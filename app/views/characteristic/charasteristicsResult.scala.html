@@ -24,8 +24,7 @@
     </table>
     <span id="data" pr="@Json.toJson(charts)"></span>
     <div id="plot" ></div>
-}
-    
+
     <script>
         var a = document.getElementById("data").getAttribute("pr")
         var charts = JSON.parse(a)
@@ -54,4 +53,9 @@
        Plotly.newPlot('plot', traces, layout);
 
     </script>
+} {
+    <script src="@routes.Assets.versioned("react/documentList.js")" type="text/babel"></script>
+}
+    
+
 

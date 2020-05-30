@@ -3,14 +3,20 @@
 @main("All parameters") {
 
     <table>
+        <tr>
+            <th>Id</th>
+            <th>Имя характеристики</th>
+            <th>Единицы</th>
+            <th>Значение по умолчанию</th>
+        </tr>
     @for(parameter <- parameters) {
         <tr>
             <td>@parameter.id</td>
             <td>@parameter.name</td>
             <td>@parameter.unit</td>
-            <td>@parameter.defaultValue</td>
+            <td class="value">@parameter.defaultValue</td>
         </tr>
     }
 
     </table>
-}
+} { }

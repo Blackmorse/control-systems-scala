@@ -1,0 +1,12 @@
+.documents_compare {
+  width: 100%;
+}
+.documents_compare, th, td {
+    border: 1px solid black;
+}
+
+
+
+.documents_compare .name {
+    width: 450px;
+}

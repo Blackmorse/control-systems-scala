@@ -20,7 +20,6 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
 
   private val pdfParser = parametersService.getAllControlKeys.map(new PdfParser(_))
 
-
   /**
     * Create an Action to render an HTML page.
     *
@@ -47,23 +46,15 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
 
         val bytes = Files.readAllBytes(path)
 
-        pdfParser.flatMap(parser => {
-          val document = parser.parse(bytes, filename.toString)
+        parametersService.getAllControlKeys.flatMap(allControlKeys =>
+          pdfParser.flatMap(parser => {
+            val document = parser.parse(bytes, filename.toString)
 
-          parametersService.updateDocument(document)
-            .map{case(id, msg) => Ok(views.html.document(document, Some(msg)))}
-        })
+            parametersService.updateDocument(document)
+              .map{case(id, msg) => Ok(views.html.documentsCompare(Seq(document), allControlKeys, Some(msg)))}
+          })
+        )
       }
       .getOrElse(Future(InternalServerError("Some error")))
-
-  }
-
-  def document(id: Int) = Action.async { implicit request =>
-    parametersService.getDocument(id)
-      .map(document => Ok(views.html.document(document, None)))
-  }
-
-  def allDocuments() = Action.async { implicit request =>
-    parametersService.getAllDocuments().map(seq => Ok(views.html.allDocuments(seq)))
   }
 }

@@ -33,16 +33,28 @@ class ParametersService @Inject() (val parametersDAO: ParametersDAO,
     })
   }
 
+  def getDocumentsByIds(documentIds: Seq[Int]): Future[Seq[Document]] = {
+    documentParametersDAO.getDbConfig.db.run(
+      documentsDAO.documents.filter(_.id inSet documentIds).result
+    )
+      .map(documents => documents.map(document => convert(document.id, document)))
+          .map(fsd => Future.sequence(fsd)).flatten
+  }
+
   def getDocument(documentId: Int): Future[Document] = {
       documentsDAO.getDocumentById(documentId).flatMap{case Some(documentEntity) =>
-        (for(controlKeys <- getAllControlKeys;
-          documentParameters <- documentParametersDAO.getDocumentParameters(documentId))
-          yield {
-            documentParameters.map(dpe => controlKeys(dpe.parameterId) -> dpe.value)
-        }).map(_.toMap)
-          .map(parametersMap => Document(documentEntity.number, parametersMap, documentEntity.name, documentEntity.date))
+        convert(documentId, documentEntity)
       }
   }
+
+  private def convert(documentId: Int, documentEntity: DocumentEntity): Future[Document] =
+    (for(controlKeys <- getAllControlKeys;
+         documentParameters <- documentParametersDAO.getDocumentParameters(documentId))
+      yield {
+        documentParameters.map(dpe => controlKeys(dpe.parameterId) -> dpe.value)
+      }).map(_.toMap)
+      .map(parametersMap => Document(documentEntity.number, parametersMap, documentEntity.name, documentEntity.date))
+
 
   def getAllDocuments(): Future[Seq[DocumentEntity]] = documentsDAO.getAllDocuments()
 
