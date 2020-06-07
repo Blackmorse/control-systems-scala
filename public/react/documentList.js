@@ -45,7 +45,7 @@ class DocumentTable extends React.Component {
                         <td>{doc.number}</td>
                         <td>{doc.name}</td>
                         <td>{doc.date}</td>
-                        <td><a href={'/document?id=' + doc.id}>Открыть</a></td>
+                        <td><a href={'/documentByIds?ids=' + doc.id}>Открыть</a></td>
                         <td><input type="checkbox" onClick={() => this.handleCheckBoxClick(doc.id)}/></td>
                     </tr>
                 ))
