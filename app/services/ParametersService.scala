@@ -1,6 +1,6 @@
 package services
 
-import com.blackmorse.controlsystem.model.{ControlKey, Document}
+import com.blackmorse.controlsystem.model.{ControlKey, Document, FileNameParameters}
 import javax.inject.Inject
 import services.dao.{DocumentEntity, DocumentParametersDAO, DocumentsDAO, ParametersDAO}
 import slick.jdbc.MySQLProfile.api._
@@ -19,17 +19,17 @@ class ParametersService @Inject() (val parametersDAO: ParametersDAO,
     .map(_.toMap)
 
   def updateDocument(document: Document): Future[(Int, String)] = {
-    val oldDocumentFuture = documentsDAO.getDocumentByName(document.name)
+    val oldDocumentFuture = documentsDAO.getDocumentByParameters(document.fileNameParameters)
 
     oldDocumentFuture.flatMap({
       case Some(oldDocument) => for(_ <- documentParametersDAO.deleteDocumentParameters(oldDocument.id);
                                     _ <- documentsDAO.deleteDocumentById(oldDocument.id);
                                     newDocumentId <- documentsDAO.insertDocument(document);
                                     _ <- documentParametersDAO.addParametersToDocument(document.parameters, newDocumentId)
-      ) yield (newDocumentId, s"Заменен старый документ ${oldDocument.name} с датой ${oldDocument.date}")
+      ) yield (newDocumentId, s"Заменен старый документ ${oldDocument} с датой ")
       case None => for(newDocumentId <- documentsDAO.insertDocument(document);
                        _ <- documentParametersDAO.addParametersToDocument(document.parameters, newDocumentId) )
-        yield (newDocumentId, "New Document Uploaded")
+        yield (newDocumentId, "Загружен новый документ")
     })
   }
 
@@ -41,25 +41,26 @@ class ParametersService @Inject() (val parametersDAO: ParametersDAO,
           .map(fsd => Future.sequence(fsd)).flatten
   }
 
-  def getDocument(documentId: Int): Future[Document] = {
-      documentsDAO.getDocumentById(documentId).flatMap{case Some(documentEntity) =>
-        convert(documentId, documentEntity)
-      }
-  }
-
   private def convert(documentId: Int, documentEntity: DocumentEntity): Future[Document] =
     (for(controlKeys <- getAllControlKeys;
          documentParameters <- documentParametersDAO.getDocumentParameters(documentId))
       yield {
         documentParameters.map(dpe => controlKeys(dpe.parameterId) -> dpe.value)
       }).map(_.toMap)
-      .map(parametersMap => Document(documentEntity.number, parametersMap, documentEntity.name, documentEntity.date))
+      .map(parametersMap => {
+        val fileNameParameters = FileNameParameters(documentEntity.engineNumber,
+          documentEntity.objectName, documentEntity.objectEngineNumber,
+          documentEntity.lang, documentEntity.date, documentEntity.revision)
+        Document(documentEntity.id, documentEntity.number, parametersMap, fileNameParameters)
+      })
 
 
-  def getAllDocuments(): Future[Seq[DocumentEntity]] = documentsDAO.getAllDocuments()
+  def getAllDocuments(): Future[Seq[Document]] = documentsDAO.getAllDocuments()
+    .map(documentsEntities => documentsEntities.map(documentsEntity => convert(documentsEntity.id, documentsEntity)))
+    .flatMap(fsd => Future.sequence(fsd))
 
   def getDocumentsByParameters(firstParameterId: Int, firstParameterValue: String,
-                               secondParameterId: Int, secondParameterValue: String): Future[Seq[DocumentEntity]] = {
+                               secondParameterId: Int, secondParameterValue: String): Future[Seq[Document]] = {
     documentParametersDAO.getDbConfig.db.run(
       documentsDAO.documents.filter(_.id in {
         if(secondParameterValue.trim.isEmpty)
@@ -69,7 +70,9 @@ class ParametersService @Inject() (val parametersDAO: ParametersDAO,
       }
          .filter(_.parameterId === firstParameterId).filter(_.parameterValue === firstParameterValue).map(_.documentId)
       ).result
-    )
+
+    ).map(documents => documents.map(document => convert(document.id, document)))
+      .flatMap(fsd => Future.sequence(fsd))
   }
 
   def getDocumentsParameters(documentIds: Seq[Int], parameterIds: Seq[Int]) = {

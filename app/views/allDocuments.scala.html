@@ -1,4 +1,6 @@
-@(documents: Seq[services.dao.DocumentEntity])
+@import com.blackmorse.controlsystem.model.Document
+
+@(documents: Seq[Document])
 
 @main("All documents") {
     @common.documentList(documents)

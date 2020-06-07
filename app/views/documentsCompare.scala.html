@@ -10,7 +10,7 @@
             <th>Номер</th>
             <th>Название</th>
             @for(document <- documents) {
-                <th>@document.name</th>
+                <th>@document.fileNameParameters.toString</th>
             }
         </tr>
 

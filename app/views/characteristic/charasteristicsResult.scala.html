@@ -1,5 +1,6 @@
 @import play.api.libs.json.Json
-@(documents: Seq[services.dao.DocumentEntity], charts: controllers.CharacteristicChart)
+@import com.blackmorse.controlsystem.model.Document
+@(documents: Seq[Document], charts: controllers.CharacteristicChart)
 
 @main("Documents") {
     <script src='https://cdn.plot.ly/plotly-latest.min.js' ></script>
@@ -10,7 +11,7 @@
     <table class="parametersTable">
         @for(documentChart <- charts.documentCharts) {
         <tr>
-            <td rowspan="2">@documentChart.documentEntity.name</td>
+            <td rowspan="2">@documentChart.document.fileNameParameters.toString</td>
             @for(temperature <- documentChart.temperatures) {
             <td>@temperature</td>
             }
@@ -35,7 +36,7 @@
 
         for (i = 0 ; i < charts.documentCharts.length; i++) {
           var trace = {
-            name: charts.documentCharts[i].documentEntity.name,
+            name: charts.documentCharts[i].document.number,
             x: charts.documentCharts[i].percents,
             y: charts.documentCharts[i].temperatures,
             type: 'scatter'
@@ -45,6 +46,11 @@
 
         var layout = {
           showlegend: true,
+          yaxis: {
+             // autorange: true,
+             range: [200, 600],
+             type: 'linear'
+          },
 	      legend: {
 	        "orientation": "h"
 	      }

@@ -10,7 +10,10 @@ lazy val commonDependencies = Seq(
 
 lazy val model = project
   .settings(
-    assemblySettings
+    assemblySettings,
+    libraryDependencies ++= Seq(
+      "com.typesafe.play" % "play-json_2.12" % "2.8.1"
+    )
   )
 
 lazy val pdf = project

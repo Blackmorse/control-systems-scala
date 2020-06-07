@@ -1,5 +1,6 @@
 package controllers
 
+import com.blackmorse.controlsystem.model.{ControlKey, Document, FileNameParameters}
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.data.Form
@@ -7,8 +8,8 @@ import play.api.data.Forms._
 import play.api.libs.json.Json
 import play.api.mvc.{BaseController, ControllerComponents}
 import services.ParametersService
-import services.dao.DocumentEntity
 import play.api.data.validation.Constraints._
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -45,32 +46,23 @@ class CharacteristicsController @Inject()(val controllerComponents: ControllerCo
   def characteristicsResult(firstParameterId: Int, firstParameterValue: String,
                             secondParameterId: Int, secondParameterValue: String) = Action.async { implicit request =>
 
-    for (documents <- parametersService.getDocumentsByParameters(firstParameterId, firstParameterValue, secondParameterId, secondParameterValue);
-         characteristicChart <- chart(documents))
-      yield Ok(views.html.characteristic.charasteristicsResult(documents, characteristicChart))
+    for (documents <- parametersService.getDocumentsByParameters(firstParameterId, firstParameterValue, secondParameterId, secondParameterValue))
+      yield Ok(views.html.characteristic.charasteristicsResult(documents, chart(documents)))
   }
 
-  def chart(documentEntities: Seq[DocumentEntity]) = {
+  def chart(documents: Seq[Document]): CharacteristicChart = {
+    val documentCharts = documents.map(document => {
+      val characteristicParameter = document.parameters.find(_._1.code == characteristicsParameter).getOrElse(throw new RuntimeException("No characteristics parameter at the document"))
+      val (temperatureParameters, percentsParameters) = getActualParameters(characteristicParameter._2)
 
-    val allParameterIds = firstPercents ++ firstTemperatures ++ secondPercents ++ secondTemperatures ++ thirdPercents ++ thirdTemperatures ++ Seq(characteristicsParameter)
-    val allParameters = parametersService.getDocumentsParameters(documentEntities.map(_.id), allParameterIds)
-
-    val documentEntitiesMap = documentEntities.map(de => de.id -> de).toMap
-
-    allParameters.map(_.groupBy(_.documentId).map { case (docId, listParameters) => {
-      val document = documentEntitiesMap(docId)
-      val characteristicParameter = listParameters.find(_.parameterId == characteristicsParameter).getOrElse(throw new RuntimeException("No characteristics parameter at the document"))
-
-      val (temperatureParameters, percentsParameters) = getActualParameters(characteristicParameter.value)
-
-      val listParametersMap = listParameters.map(lp => lp.parameterId -> lp.value).toMap
+      val listParametersMap = document.parameters.map{case (controlKey, value) => controlKey.code -> value}.toMap
 
       val temperatures = temperatureParameters.map(temperatureId => convertTemperature(listParametersMap(temperatureId)))
       val percents = percentsParameters.map(percentId => convertPercent(listParametersMap(percentId)))
 
       DocumentChart(document, percents, temperatures)
-    }
-    }).map(documentCharts => CharacteristicChart(documentCharts.toSeq))
+    })
+    CharacteristicChart(documentCharts)
   }
 
 
@@ -92,7 +84,7 @@ class CharacteristicsController @Inject()(val controllerComponents: ControllerCo
 
 case class CharacteristicChart(documentCharts: Seq[DocumentChart])
 
-case class DocumentChart(documentEntity: DocumentEntity, percents: Seq[Double], temperatures: Seq[Int])
+case class DocumentChart(document: Document, percents: Seq[Double], temperatures: Seq[Int])
 
 object DocumentChart {
   implicit val writer = Json.writes[DocumentChart]

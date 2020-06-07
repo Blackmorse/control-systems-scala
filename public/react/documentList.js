@@ -32,9 +32,13 @@ class DocumentTable extends React.Component {
             <table className="documentList">
             <thead>
                 <tr>
-                    <th>Номер</th>
-                    <th>Имя</th>
+                    <th>№ документа</th>
+                    <th>№ двигателя</th>
+                    <th>Название объекта</th>
+                    <th>№ двигателя на объекте</th>
+                    <th>Язык</th>
                     <th>Дата</th>
+                    <th>Ревизия</th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -43,8 +47,12 @@ class DocumentTable extends React.Component {
                 {documents.map(doc => (
                     <tr key={'document_row_' + doc.id}>
                         <td>{doc.number}</td>
-                        <td>{doc.name}</td>
-                        <td>{doc.date}</td>
+                        <td>{doc.fileNameParameters.engineNumber}</td>
+                        <td>{doc.fileNameParameters.objectName}</td>
+                        <td>{doc.fileNameParameters.objectEngineNumber}</td>
+                        <td>{doc.fileNameParameters.lang}</td>
+                        <td>{doc.fileNameParameters.date}</td>
+                        <td>{doc.fileNameParameters.revision}</td>
                         <td><a href={'/documentByIds?ids=' + doc.id}>Открыть</a></td>
                         <td><input type="checkbox" onClick={() => this.handleCheckBoxClick(doc.id)}/></td>
                     </tr>

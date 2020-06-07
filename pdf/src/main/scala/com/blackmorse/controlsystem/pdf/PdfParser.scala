@@ -1,6 +1,6 @@
 package com.blackmorse.controlsystem.pdf
 
-import com.blackmorse.controlsystem.model.{ControlKey, Document}
+import com.blackmorse.controlsystem.model.{ControlKey, Document, FileNameParameters}
 import org.apache.pdfbox.pdmodel.PDDocument
 import resource.managed
 import org.apache.pdfbox.text.PDFTextStripperByArea
@@ -13,7 +13,7 @@ class PdfParser(val parameters: Map[Int, ControlKey]) {
   private val pattern = Pattern.compile("^\\d{5}")
 
   def parse(inputArray: Array[Byte], fileName: String) : Document = {
-    val (name, date) = PdfParser.parseName(fileName)
+    val fileNameParameters = PdfParser.parseName(fileName)
     (for (doc <- managed(PDDocument.load(inputArray))) yield {
       val data = mutable.Map[ControlKey, String]()
       val region = new Rectangle2D.Double(0, 270, 500, 500)
@@ -52,7 +52,17 @@ class PdfParser(val parameters: Map[Int, ControlKey]) {
         }
       }
       (docNumber, data)
-    }).acquireAndGet{case(docNumber, parameters) => Document(docNumber, parameters.toMap, name, date)}
+    }).acquireAndGet{case(docNumber, documentParameters) => {
+      val extendedParameters = documentParameters ++ Seq(
+        parameters(-1) -> fileNameParameters.engineNumber.toString, //Номер двигателя
+        parameters(-2) -> fileNameParameters.objectName, //Имя объекта
+        parameters(-3) -> fileNameParameters.objectEngineNumber.toString, //Номер двигателя на объекте
+        parameters(-4) -> fileNameParameters.lang,//Язык
+        parameters(-5) -> fileNameParameters.date,//Дата
+        parameters(-6) -> fileNameParameters.revision.toString//Ревизия
+      )
+      Document(0, docNumber, extendedParameters.toMap, fileNameParameters)
+    }}
   }
 }
 
@@ -69,7 +79,18 @@ object PdfParser {
     s.substring(valueIndex, s.length)
   }
 
-  def parseName(fileName: String): (String, String) = {
-    (fileName.substring(0, fileName.length - 11), fileName.substring(fileName.length - 10, fileName.length - 4))
+  def parseName(fileName: String): FileNameParameters = {
+    val filenameWithoutExtension = fileName.substring(0, fileName.length - 4)
+    val split = filenameWithoutExtension.split("_")
+    val engineNumber = split(0).toInt
+    val objectName = split(1)
+    val objectEngineNumber = split(2).substring(1).toInt
+    //#3 - is parameters
+    val lang = split(4)
+    val yearAndRevision = split(5).split("#")
+
+    val (date, revision) =if(yearAndRevision.length == 1) (yearAndRevision(0), 1) else (yearAndRevision(0), yearAndRevision(1).toInt)
+
+    FileNameParameters(engineNumber, objectName, objectEngineNumber, lang, date, revision)
   }
 }
