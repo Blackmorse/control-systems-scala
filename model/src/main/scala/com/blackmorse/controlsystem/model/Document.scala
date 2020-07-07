@@ -13,7 +13,13 @@ object Document {
   implicit val writesFileNameParameter = Json.writes[FileNameParameters]
   implicit val writesControlKey = Json.writes[ControlKey]
   implicit val writesDocument = Json.writes[Document]
+
+
 }
 
 case class Document(id: Int, number: Int, parameters: Map[ControlKey, String],
-                    fileNameParameters: FileNameParameters)
+                    fileNameParameters: FileNameParameters) {
+  override def toString: String = {
+    s"""номер $id, джижок номер ${fileNameParameters.engineNumber}, объект ${fileNameParameters.objectName}, дата ${fileNameParameters.date}, ревизия ${fileNameParameters.revision}"""
+  }
+}

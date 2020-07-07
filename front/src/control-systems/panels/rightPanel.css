@@ -1,0 +1,36 @@
+.right_panel_navigation {
+    width: 100%;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .nav_link {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid gray;
+  }
+
+  .nav_link:visited,
+  .nav_link:active,
+  .nav_link {
+      color: white;
+      text-decoration: none;
+  }
+  
+  .nav_link:hover {
+      text-decoration: none;
+  }
+
+  .nav_link_text {
+    margin-left: 3px;
+  }
+
+  .selected_page.nav_link {
+    background-color: white;
+    color: black;
+    box-shadow: inset 2px 2px 2px black;
+  }
+
+  

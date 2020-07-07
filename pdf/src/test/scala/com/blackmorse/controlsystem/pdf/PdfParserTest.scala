@@ -8,7 +8,7 @@ import org.scalatest.funsuite.AnyFunSuiteLike
 
 class PdfParserTest extends AnyFunSuiteLike {
   test("test parse document") {
-    val file = getClass.getResource("/2214692_Penza_6_M6_Parametrs_RU_190509.pdf").getPath
+    val file = getClass.getResource("/home/blackmorse/Downloads/Telegram Desktop/2215321_Arbitec_M1_Parametrs_RU_200609.pdf").getPath
     val arr = Files.readAllBytes(Paths.get(file))
 
     val aggregateKey = ControlKey(10000, "Агрегат No.")

@@ -20,6 +20,10 @@ class DocumentsController @Inject()(val controllerComponents: ControllerComponen
     )
   }
 
+  def deleteDocument(id: Int) = Action.async { implicit request =>
+    parametersService.deleteDocument(id).map(r => Ok(""))
+  }
+
   def allDocuments() = Action.async { implicit request =>
     parametersService.getAllDocuments().map(seq => Ok(views.html.allDocuments(seq)))
   }

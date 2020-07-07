@@ -18,6 +18,11 @@ class ParametersService @Inject() (val parametersDAO: ParametersDAO,
     .map(seq => seq.map(el => el.id -> ControlKey(el.id, el.name)))
     .map(_.toMap)
 
+  def deleteDocument(id: Int) = {
+    documentParametersDAO.deleteDocumentParameters(id)
+    documentsDAO.deleteDocumentById(id)
+  }
+
   def updateDocument(document: Document): Future[(Int, String)] = {
     val oldDocumentFuture = documentsDAO.getDocumentByParameters(document.fileNameParameters)
 
@@ -26,7 +31,7 @@ class ParametersService @Inject() (val parametersDAO: ParametersDAO,
                                     _ <- documentsDAO.deleteDocumentById(oldDocument.id);
                                     newDocumentId <- documentsDAO.insertDocument(document);
                                     _ <- documentParametersDAO.addParametersToDocument(document.parameters, newDocumentId)
-      ) yield (newDocumentId, s"Заменен старый документ ${oldDocument} с датой ")
+      ) yield (newDocumentId, s"Заменен старый документ ${oldDocument}")
       case None => for(newDocumentId <- documentsDAO.insertDocument(document);
                        _ <- documentParametersDAO.addParametersToDocument(document.parameters, newDocumentId) )
         yield (newDocumentId, "Загружен новый документ")

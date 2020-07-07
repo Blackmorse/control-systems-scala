@@ -32,6 +32,7 @@ class DocumentTable extends React.Component {
             <table className="documentList">
             <thead>
                 <tr>
+                    <th></th>
                     <th>№ документа</th>
                     <th>№ двигателя</th>
                     <th>Название объекта</th>
@@ -46,6 +47,7 @@ class DocumentTable extends React.Component {
             <tbody>
                 {documents.map(doc => (
                     <tr key={'document_row_' + doc.id}>
+                        <td><a href={'/deleteDocumentById'}></a></td>
                         <td>{doc.number}</td>
                         <td>{doc.fileNameParameters.engineNumber}</td>
                         <td>{doc.fileNameParameters.objectName}</td>

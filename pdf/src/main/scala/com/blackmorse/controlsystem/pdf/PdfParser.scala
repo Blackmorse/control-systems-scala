@@ -12,11 +12,13 @@ import scala.collection.mutable
 class PdfParser(val parameters: Map[Int, ControlKey]) {
   private val pattern = Pattern.compile("^\\d{5}")
 
+
+
   def parse(inputArray: Array[Byte], fileName: String) : Document = {
     val fileNameParameters = PdfParser.parseName(fileName)
     (for (doc <- managed(PDDocument.load(inputArray))) yield {
       val data = mutable.Map[ControlKey, String]()
-      val region = new Rectangle2D.Double(0, 270, 500, 500)
+      val region = new Rectangle2D.Double(0, 200, 500, 700)
       val regionName = "region"
 
       val stripper = new PDFTextStripperByArea
@@ -40,7 +42,7 @@ class PdfParser(val parameters: Map[Int, ControlKey]) {
         val entries = text.split(System.lineSeparator())
 
         for (entry <- entries) {
-
+          println(entry)
           val matcher = pattern.matcher(entry)
           if (matcher.find) {
             val code = Integer.valueOf(entry.substring(0, 5).trim)
