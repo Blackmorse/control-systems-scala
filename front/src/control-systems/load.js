@@ -8,7 +8,10 @@ import RightPanel from './panels/rightPanel'
 class Load extends React.Component {
     constructor(props) {
       super(props)
-      this.state = {msg: ''}
+      this.state = {
+        msg: '',
+        selectedPage: "Загрузка"
+      }
       this.rightPanelLinks = [
       {
         title: "Загрузка",
@@ -22,13 +25,13 @@ class Load extends React.Component {
   }
 
   rightPanelLoadOnClick = () => {
-    console.log('Нажали Загрузку')    
+     
   }
 
   onLoad= ()=> {
     const data = new FormData() 
     data.append('file', this.state.file)
-    axios.post("http://localhost:9002/upload", data, { // receive two parameter endpoint url ,form data 
+    axios.post(process.env.REACT_APP_BASE_SERVER_URL + "/upload", data, { // receive two parameter endpoint url ,form data 
       })
       .then(res => { // then print response status
         this.setState({file: this.state.file,
@@ -41,9 +44,14 @@ class Load extends React.Component {
   }
 
     render() {
+      var rightPanelProps = {
+        links: this.rightPanelLinks,
+        selected: this.state.selectedPage
+      }
+
       return <div className="full_layout" style={{ background: 'rgb(130,50,32)' }}>
       <div className="main_layout">
-        <TopPanel pageName="Загрузка"/>
+        <TopPanel pageName="Загрузка" />
         <div className="bottom_section">
           <section className="content">
             <section className="load_section"> 
@@ -54,7 +62,7 @@ class Load extends React.Component {
               <label>{this.state.msg}</label>
             </section>
           </section>
-          <RightPanel links={this.rightPanelLinks}/>
+          <RightPanel value={rightPanelProps} />
         </div>
       </div>
       </div>
