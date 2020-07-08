@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import './css/index.css';
 import {  Route, BrowserRouter as Router } from 'react-router-dom'
 import Characteristic from './control-systems/characteristics'
-import Documents from './control-systems/documents'
+import Documents from './control-systems/documents/documents'
 import Load from './control-systems/load'
 import Parameters from './control-systems/parameters'
 import * as serviceWorker from './serviceWorker';

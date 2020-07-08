@@ -49,7 +49,7 @@ class Load extends React.Component {
         selected: this.state.selectedPage
       }
 
-      return <div className="full_layout" style={{ background: 'rgb(130,50,32)' }}>
+      return <div className="full_layout" style={{ background: 'rgb(55,70,132)' }}>
       <div className="main_layout">
         <TopPanel pageName="Загрузка" />
         <div className="bottom_section">

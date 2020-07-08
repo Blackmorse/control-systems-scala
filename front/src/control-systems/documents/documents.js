@@ -1,7 +1,7 @@
 import React from 'react'
 import './documents.css'
-import TopPanel from './panels/topPanel'
-import RightPanel from './panels/rightPanel'
+import TopPanel from '../panels/topPanel'
+import RightPanel from '../panels/rightPanel'
 import axios from 'axios';
 
 class Documents extends React.Component {
