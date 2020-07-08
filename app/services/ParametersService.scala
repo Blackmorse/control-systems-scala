@@ -46,7 +46,7 @@ class ParametersService @Inject() (val parametersDAO: ParametersDAO,
           .map(fsd => Future.sequence(fsd)).flatten
   }
 
-  private def convert(documentId: Int, documentEntity: DocumentEntity): Future[Document] =
+  def convert(documentId: Int, documentEntity: DocumentEntity): Future[Document] =
     (for(controlKeys <- getAllControlKeys;
          documentParameters <- documentParametersDAO.getDocumentParameters(documentId))
       yield {
@@ -58,11 +58,6 @@ class ParametersService @Inject() (val parametersDAO: ParametersDAO,
           documentEntity.lang, documentEntity.date, documentEntity.revision)
         Document(documentEntity.id, documentEntity.number, parametersMap, fileNameParameters)
       })
-
-
-  def getAllDocuments(): Future[Seq[Document]] = documentsDAO.getAllDocuments()
-    .map(documentsEntities => documentsEntities.map(documentsEntity => convert(documentsEntity.id, documentsEntity)))
-    .flatMap(fsd => Future.sequence(fsd))
 
   def getDocumentsByParameters(firstParameterId: Int, firstParameterValue: String,
                                secondParameterId: Int, secondParameterValue: String): Future[Seq[Document]] = {

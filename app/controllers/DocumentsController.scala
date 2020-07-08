@@ -1,14 +1,15 @@
 package controllers
 
 import com.google.inject.Inject
+import play.api.libs.json.Json
 import play.api.mvc.{BaseController, ControllerComponents}
-import play.mvc.Action
-import services.ParametersService
+import services.{DocumentsService, ParametersService}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class DocumentsController @Inject()(val controllerComponents: ControllerComponents,
-                                    val parametersService: ParametersService)
+                                    val parametersService: ParametersService,
+                                    val documentsService: DocumentsService)
                                    (implicit executionContext: ExecutionContext)
     extends BaseController {
 
@@ -25,6 +26,10 @@ class DocumentsController @Inject()(val controllerComponents: ControllerComponen
   }
 
   def allDocuments() = Action.async { implicit request =>
-    parametersService.getAllDocuments().map(seq => Ok(views.html.allDocuments(seq)))
+    documentsService.getAllDocuments().map(seq => Ok(views.html.allDocuments(seq)))
+  }
+
+  def allDocumentsRest() = Action.async { implicit request =>
+    documentsService.getAllDocuments().map(seq => Ok(Json.toJson(seq)))
   }
 }
