@@ -12,12 +12,26 @@ import play.api.data.validation.Constraints._
 
 import scala.concurrent.{ExecutionContext, Future}
 
+case class DocumentChart(document: Document, percents: Seq[Double], temperatures: Seq[Int])
+
+object DocumentChart {
+  implicit val writer = Json.writes[DocumentChart]
+}
+
+case class CharacteristicChart(documentCharts: Seq[DocumentChart])
+
+object CharacteristicChart {
+  implicit val writes = Json.writes[CharacteristicChart]
+}
+
 @Singleton
 class CharacteristicsController @Inject()(val controllerComponents: ControllerComponents,
                                           val parametersService: ParametersService,
                                           val config: Configuration)
                                          (implicit executionContext: ExecutionContext)
   extends BaseController with play.api.i18n.I18nSupport {
+
+
 
   private val firstPercents = config.get[Seq[Int]]("control.system.characteristics.first.percents")
   private val firstTemperatures = config.get[Seq[Int]]("control.system.characteristics.first.temperatures")
@@ -48,6 +62,21 @@ class CharacteristicsController @Inject()(val controllerComponents: ControllerCo
 
     for (documents <- parametersService.getDocumentsByParameters(firstParameterId, firstParameterValue, secondParameterId, secondParameterValue))
       yield Ok(views.html.characteristic.charasteristicsResult(documents, chart(documents)))
+  }
+
+  def searchDocumentsWithCharts(searchParams: Seq[String]) = Action.async{ implicit  request =>
+    searchParams.foreach(println)
+
+
+    val params = searchParams.map(searchParam => {
+      val split = searchParam.split("=")
+      (split(0).toInt, if(split.length > 1) split(1) else "")
+    })
+
+//    implicit val writes = Json.writes[CharacteristicChart]
+
+    parametersService.getDocumentsByParameters(params.head._1, params.head._2, params(1)._1, params(1)._2)
+      .map(documents => Ok(Json.toJson(chart(documents))))
   }
 
   def chart(documents: Seq[Document]): CharacteristicChart = {
@@ -82,18 +111,12 @@ class CharacteristicsController @Inject()(val controllerComponents: ControllerCo
   private def convertPercent(percent: String): Double = percent.replace("%", "").replace(",", ".").trim.toDouble
 }
 
-case class CharacteristicChart(documentCharts: Seq[DocumentChart])
-
-case class DocumentChart(document: Document, percents: Seq[Double], temperatures: Seq[Int])
-
-object DocumentChart {
-  implicit val writer = Json.writes[DocumentChart]
-}
 
 
-object CharacteristicChart {
-  implicit val userImplicitWrites = Json.writes[CharacteristicChart]
-}
+
+
+
+
 
 case class CharacteristicsForm(firstParameterId: Int, firstParameterValue: String,
                                secondParameterId: Int, secondParameterValue: String)

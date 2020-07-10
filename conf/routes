@@ -14,6 +14,7 @@ GET     /allParameters              controllers.ParametersController.allParamete
 GET     /characteristics            controllers.CharacteristicsController.characteristics
 POST    /searchCharacteristics      controllers.CharacteristicsController.searchCharacteristics
 GET     /searchCharacteristicsResult controllers.CharacteristicsController.characteristicsResult(firstParameterId: Int, firstParameterValue: String, secondParameterId: Int, secondParameterValue: String)
+GET     /searchDocumentsWithChart   controllers.CharacteristicsController.searchDocumentsWithCharts(searchParams: Seq[String])
 
 GET     /documentByIds              controllers.DocumentsController.documents(ids: Seq[Int])
 DELETE  /deleteDocumentById         controllers.DocumentsController.deleteDocument(id: Int)
