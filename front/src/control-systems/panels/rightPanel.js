@@ -3,21 +3,21 @@ import './rightPanel.css'
 
 class RightPanel extends React.Component {
 
-    constructor(props) {
-        super(props);
-        // this.state={
-        //     selected: props.selected
-        // };
-        this.selected=props.value.selected
-        this.links=props.value.links
-    }
+    // constructor(props) {
+    //     super(props);
+    //     // this.state={
+    //     //     selected: props.selected
+    //     // };
+    //     this.selected=props.value.selected
+    //     this.links=props.value.links
+    // }
 
     render() {
         return <aside className="right_panel">
             <nav className="right_panel_navigation">
             
-                {this.links.map(link => {
-                    return <a className={"nav_link" + (this.selected === link.title ? " selected_page" : "")} 
+                {this.props.value.links.map(link => {
+                    return <a className={"nav_link" + (this.props.value.selected === link.title ? " selected_page" : "")} 
                             href="#" onClick={link.onClick} key={link.title}>
                             <span className="nav_link_text">
                                 {link.title}

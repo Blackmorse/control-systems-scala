@@ -10,6 +10,7 @@ POST    /upload                     controllers.HomeController.uploadRest()
 GET     /parameters                 controllers.HomeController.parameters()
 GET     /allDocuments               controllers.DocumentsController.allDocuments()
 GET     /allDocumentsRest           controllers.DocumentsController.allDocumentsRest()
+GET     /allParameters              controllers.ParametersController.allParameters()
 GET     /characteristics            controllers.CharacteristicsController.characteristics
 POST    /searchCharacteristics      controllers.CharacteristicsController.searchCharacteristics
 GET     /searchCharacteristicsResult controllers.CharacteristicsController.characteristicsResult(firstParameterId: Int, firstParameterValue: String, secondParameterId: Int, secondParameterValue: String)
