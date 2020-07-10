@@ -1,5 +1,6 @@
 import React from 'react'
-import './documents.css'
+// import './documents.css'
+import '../../css/tables.css'
 import TopPanel from '../panels/topPanel'
 import RightPanel from '../panels/rightPanel'
 import axios from 'axios';

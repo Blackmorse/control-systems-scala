@@ -1,0 +1,25 @@
+.green_table {
+  margin: 5px;
+}
+  
+.green_table th {
+  background-color: rgb(23,93,80);
+  color: white;
+}
+  
+.green_table td {
+  border-bottom: 1px solid rgb(23,93,80);
+}
+
+.red_table {
+    margin: 5px;
+}
+
+.red_table th {
+    background-color: rgb(130,50,32);
+    color: white;
+}
+
+.red_table td {
+    border-bottom: 1px solid rgb(130,50,32);
+}

@@ -3,7 +3,7 @@ import React from 'react'
 class DocumentList extends React.Component {
 
     render() {
-        return <table className="documents_list_table">
+        return <table className="green_table">
         <thead>
           <tr>
             <th>№ документа</th>

@@ -23,7 +23,7 @@ class DocumentsCompare extends React.Component {
             }, {})
         })
 
-        return <table className="documents_list_table">
+        return <table className="green_table">
             <thead>
               <tr>
                 <th>Номер</th>
