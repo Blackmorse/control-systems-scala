@@ -4,6 +4,7 @@ import TopPanel from '../panels/topPanel'
 import RightPanel from '../panels/rightPanel'
 import axios from 'axios';
 import CharacteristicsSearchSection from './searchSection'
+import CharacteristicsChart from './characteristicsChart'
 
 class Characteristic extends React.Component {
   constructor(props) {
@@ -21,6 +22,10 @@ class Characteristic extends React.Component {
     axios.get(requestUrl)
       .then(res => {
         console.log(res.data)
+        var newState = this.state
+        newState.selectedPage = "График"
+        newState.documentCharts = res.data
+        this.setState(newState)
       })
   }
 
@@ -32,7 +37,7 @@ class Characteristic extends React.Component {
       },
       {
         title: "График",
-        onClick: () => {var newState=this.state; newState.selectedPage="График"; this.setState(newState)}
+        onClick: () => {}
       }
       ],
       selected: this.state.selectedPage
@@ -40,7 +45,8 @@ class Characteristic extends React.Component {
 
     var content = (this.state.selectedPage === "Поиск") ? 
       <CharacteristicsSearchSection searchClicked={this.onSearchClicked}/> :
-      <span>График</span>
+      <CharacteristicsChart documentCharts={this.state.documentCharts}/> 
+      // <span>adasdas</span>
 
     return <div className="full_layout" style={{ background: 'rgb(23,93,80)' }}>
     <div className="main_layout">

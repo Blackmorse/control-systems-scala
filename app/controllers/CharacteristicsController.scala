@@ -65,9 +65,6 @@ class CharacteristicsController @Inject()(val controllerComponents: ControllerCo
   }
 
   def searchDocumentsWithCharts(searchParams: Seq[String]) = Action.async{ implicit  request =>
-    searchParams.foreach(println)
-
-
     val params = searchParams.map(searchParam => {
       val split = searchParam.split("=")
       (split(0).toInt, if(split.length > 1) split(1) else "")
