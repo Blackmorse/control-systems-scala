@@ -31,6 +31,10 @@ class Load extends React.Component {
   onLoad= ()=> {
     const data = new FormData() 
     data.append('file', this.state.file)
+    this.setState({
+      file: this.state.file,
+      msg: 'Загрузка...'
+    })
     axios.post(process.env.REACT_APP_BASE_SERVER_URL + "/upload", data, { // receive two parameter endpoint url ,form data 
       })
       .then(res => { // then print response status

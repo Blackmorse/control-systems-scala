@@ -2,7 +2,7 @@ name := "control-systems-scala"
 
 version := "0.1"
 
-scalaVersion in ThisBuild := "2.12.0"
+scalaVersion in ThisBuild := "2.12.12"
 
 lazy val commonDependencies = Seq(
   "org.scalatest" %% "scalatest" % "3.1.0" % Test

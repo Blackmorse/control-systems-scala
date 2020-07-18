@@ -65,6 +65,16 @@ class Documents extends React.Component {
     }
   }
 
+  deleteDocument = (id) => {
+    var requestUrl = process.env.REACT_APP_BASE_SERVER_URL + '/deleteDocumentById?id=' + id
+    axios.delete(requestUrl)
+      .then(res => {
+        var newState = this.state
+        newState.documents = this.state.documents.filter(doc => doc.id !== id)
+        this.setState(newState)
+      })
+  }
+
   
   render() {
     var rightPanelLinks = [
@@ -86,7 +96,8 @@ class Documents extends React.Component {
     var documentProps = {
       documents: this.state.documents,
       checkAction: this.handleCheckBoxClick,
-      checkedIds: this.state.checkedIds
+      checkedIds: this.state.checkedIds,
+      deleteAction: this.deleteDocument
     }
 
     var content

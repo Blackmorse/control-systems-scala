@@ -13,7 +13,7 @@ class DocumentList extends React.Component {
             <th>Язык</th>
             <th>Дата</th>
             <th>Ревизия</th>
-            <th></th>
+            <th>К сравнению</th>
             <th></th>
           </tr>
         </thead>
@@ -27,11 +27,13 @@ class DocumentList extends React.Component {
             <td>{document.fileNameParameters.lang}</td>
             <td>{document.fileNameParameters.date}</td>
             <td>{document.fileNameParameters.revision}</td>
-            <td></td>
+            
             <td><input type="checkbox"
                       defaultChecked={this.props.value.checkedIds.has(document.id)} 
                       onClick={() => this.props.value.checkAction(document.id)}/></td>
+            <td><a href="#" onClick={() => this.props.value.deleteAction(document.id)}>Удалить</a></td>
           </tr>
+            
           })}
         </tbody>
       </table>
