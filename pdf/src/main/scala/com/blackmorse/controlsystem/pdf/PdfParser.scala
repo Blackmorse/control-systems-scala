@@ -83,13 +83,25 @@ object PdfParser {
 
   def parseName(fileName: String): FileNameParameters = {
     val filenameWithoutExtension = fileName.substring(0, fileName.length - 4)
-    val split = filenameWithoutExtension.split("_")
-    val engineNumber = split(0).toInt
-    val objectName = split(1)
-    val objectEngineNumber = split(2).substring(1).toInt
-    //#3 - is parameters
-    val lang = split(4)
-    val yearAndRevision = split(5).split("#")
+
+    val engineSplit = filenameWithoutExtension.split("_", 2)
+
+
+
+    val engineNumber = engineSplit(0).toInt
+
+    val objectNameMatch = "_M[0-9]+_".r.findFirstMatchIn(engineSplit(1))
+      .getOrElse(throw new RuntimeException("Illegal name of file"))
+
+    val objectName = engineSplit(1).substring(0, objectNameMatch.start)
+    val objectEngineNumber = engineSplit(1)
+      .substring(objectNameMatch.start + 2, objectNameMatch.end - 1)
+      .toInt
+
+    val split = engineSplit(1).substring(objectNameMatch.end).split("_")
+
+    val lang = split(1)
+    val yearAndRevision = split(2).split("#")
 
     val (date, revision) =if(yearAndRevision.length == 1) (yearAndRevision(0), 1) else (yearAndRevision(0), yearAndRevision(1).toInt)
 
