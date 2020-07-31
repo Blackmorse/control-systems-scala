@@ -12,7 +12,13 @@ import scala.collection.mutable
 class PdfParser(val parameters: Map[Int, ControlKey]) {
   private val pattern = Pattern.compile("^\\d{5}")
 
-
+  private val engineTypeMap = Map(
+    "132" -> "216",
+    "170" -> "2020",
+    "260" -> "2032",
+    "260B" -> "2032B",
+    "260В" -> "2032В"
+  )
 
   def parse(inputArray: Array[Byte], fileName: String) : Document = {
     val fileNameParameters = PdfParser.parseName(fileName)
@@ -49,7 +55,12 @@ class PdfParser(val parameters: Map[Int, ControlKey]) {
             if (entry(5) == ' ') {
               parameters.get(code).foreach(controlKey => {
                 val value = PdfParser.extractValue(PdfParser.trimWhitespaces(entry))
-                data.put(controlKey, value)
+                //Тип двигателя - подменяем
+                if (code == 10001) {
+                  data.put(controlKey, engineTypeMap.getOrElse(value, value))
+                } else {
+                  data.put(controlKey, value)
+                }
               })
             }
           }
