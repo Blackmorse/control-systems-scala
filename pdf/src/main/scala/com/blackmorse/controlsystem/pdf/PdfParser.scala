@@ -46,10 +46,12 @@ class PdfParser(val parameters: Map[Int, ControlKey]) {
           val matcher = pattern.matcher(entry)
           if (matcher.find) {
             val code = Integer.valueOf(entry.substring(0, 5).trim)
-            parameters.get(code).foreach(controlKey => {
-              val value = PdfParser.extractValue(PdfParser.trimWhitespaces(entry))
-              data.put(controlKey, value)
-            })
+            if (entry(5) == ' ') {
+              parameters.get(code).foreach(controlKey => {
+                val value = PdfParser.extractValue(PdfParser.trimWhitespaces(entry))
+                data.put(controlKey, value)
+              })
+            }
           }
         }
       }
