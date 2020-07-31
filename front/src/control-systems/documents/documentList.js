@@ -6,7 +6,8 @@ class DocumentList extends React.Component {
         return <table className="green_table">
         <thead>
           <tr>
-            <th>№ документа</th>
+            <th>Тип двигателя</th>
+            <th>Число цилиндров</th>
             <th>№ двигателя</th>
             <th>Название объекта</th>
             <th>№ двигателя на объекте</th>
@@ -20,7 +21,8 @@ class DocumentList extends React.Component {
         <tbody>
           {this.props.value.documents.map(document => {
           return <tr key={"document_" + document.id}>
-            <td>{document.number}</td>
+            <td>{document.parameters.filter(parameter => parameter[0].code===10001)[0][1]}</td>
+            <td>{document.parameters.filter(parameter => parameter[0].code===10003)[0][1]}</td>
             <td>{document.fileNameParameters.engineNumber}</td>
             <td>{document.fileNameParameters.objectName}</td>
             <td>{document.fileNameParameters.objectEngineNumber}</td>
