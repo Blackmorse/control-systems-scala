@@ -33,7 +33,8 @@ class PdfParser(val parameters: Map[Int, ControlKey]) {
 
       val header = stripper.getTextForRegion("header")
 
-      val substr = header.substring(header.indexOf("Номер:"))
+      val numberIndex = if (header.indexOf("Номер:") > -1) header.indexOf("Номер:") else header.indexOf("Number:")
+      val substr = header.substring(numberIndex)
       val docNumber = """\d+""".r.findFirstMatchIn(substr)
         .map(matc => substr.substring(matc.start, matc.end).toInt)
         .getOrElse(throw new Exception("No document number"))
