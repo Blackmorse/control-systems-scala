@@ -13,7 +13,7 @@ class PdfParser(val parameters: Map[Int, ControlKey]) {
   private val pattern = Pattern.compile("^\\d{5}")
 
   private val engineTypeMap = Map(
-    "132" -> "216",
+    "132" -> "2016",
     "170" -> "2020",
     "260" -> "2032",
     "260B" -> "2032B",
