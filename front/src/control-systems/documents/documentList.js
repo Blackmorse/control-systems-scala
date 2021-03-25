@@ -20,9 +20,11 @@ class DocumentList extends React.Component {
         </thead>
         <tbody>
           {this.props.value.documents.map(document => {
+	  var cylindersArr = document.parameters.filter(parameter => parameter[0].code === 10003)[0]
+          var cylinders = (cylindersArr !== undefined && cylindersArr.length > 1) ? cylindersArr[1] : ''
           return <tr key={"document_" + document.id}>
             <td>{document.parameters.filter(parameter => parameter[0].code===10001)[0][1]}</td>
-            <td>{document.parameters.filter(parameter => parameter[0].code===10003)[0][1]}</td>
+            <td>{cylinders}</td>
             <td>{document.fileNameParameters.engineNumber}</td>
             <td>{document.fileNameParameters.objectName}</td>
             <td>{document.fileNameParameters.objectEngineNumber}</td>
