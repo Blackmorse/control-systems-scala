@@ -20,6 +20,6 @@ object Document {
 case class Document(id: Int, number: Int, parameters: Map[ControlKey, String],
                     fileNameParameters: FileNameParameters) {
   override def toString: String = {
-    s"""номер $id, джижок номер ${fileNameParameters.engineNumber}, объект ${fileNameParameters.objectName}, дата ${fileNameParameters.date}, ревизия ${fileNameParameters.revision}"""
+    s"""номер $id, движок номер ${fileNameParameters.engineNumber}, объект ${fileNameParameters.objectName}, дата ${fileNameParameters.date}, ревизия ${fileNameParameters.revision}"""
   }
 }

@@ -51,7 +51,7 @@ class DocumentsDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 case class DocumentEntity(id: Int, number: Int, engineNumber: Int, objectName: String,
                           objectEngineNumber: Int, lang: String, date:String, revision: Int) {
   override def toString: String = {
-    s"""номер $id, джижок номер ${engineNumber}, объект ${objectName}, дата ${date}, ревизия ${revision}"""
+    s"""номер $id, движок номер ${engineNumber}, объект ${objectName}, дата ${date}, ревизия ${revision}"""
   }
 }
 
