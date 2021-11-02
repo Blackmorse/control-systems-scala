@@ -1,0 +1,42 @@
+version: "2.4"
+
+networks:
+  cs_network:
+    name: cs_network
+
+services:
+  cs_maria_db:
+    image: mariadb:10.6.4
+    container_name: cs_maria_db
+    expose:
+     - "3306"
+    ports:
+     - 3306
+    networks:
+     - cs_network
+    volumes:
+     - ./mdb_tmp:/var/lib/mysql
+    environment:
+      MARIADB_ROOT_PASSWORD: "root"    
+      MARIADB_DATABASE: "control_systems"
+      MARIADB_USER: "control_systems"
+      MARIADB_PASSWORD: "control_systems"
+
+#  cs_web:
+#    image: mozilla/sbt:11.0.8_1.3.13
+#    container_name: cs_web
+#    expose: 
+#     - "9000"
+#    ports:
+#     - 9000:9000
+#    networks:
+#     - cs_network
+#    volumes:
+#     - ./:/app
+#     - ~/.m2:/root/.m2
+#     - ~/.sbt:/root/.sbt
+#     - ~/.ivy2:/root/.ivy2
+#    command: bash -c "cd /app && sbt run"
+#    depends_on:
+#     - cs_maria_db
+    
