@@ -1,0 +1,9 @@
+FROM node:17.3.0-stretch
+
+WORKDIR /app
+COPY front/package.json /app/
+COPY front/public/ /app/public
+COPY front/src/ /app/src
+
+RUN npm install
+CMD ["npm", "start"]

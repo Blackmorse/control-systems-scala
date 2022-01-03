@@ -22,21 +22,34 @@ services:
       MARIADB_USER: "control_systems"
       MARIADB_PASSWORD: "control_systems"
 
-#  cs_web:
-#    image: mozilla/sbt:11.0.8_1.3.13
-#    container_name: cs_web
-#    expose: 
-#     - "9000"
-#    ports:
-#     - 9000:9000
-#    networks:
-#     - cs_network
-#    volumes:
-#     - ./:/app
-#     - ~/.m2:/root/.m2
-#     - ~/.sbt:/root/.sbt
-#     - ~/.ivy2:/root/.ivy2
-#    command: bash -c "cd /app && sbt run"
-#    depends_on:
-#     - cs_maria_db
+  cs_web:
+    build:
+      dockerfile: DockerfileWeb
+    container_name: cs_web
+    expose:
+      - 9000
+    ports:
+      - 9000:9000
+    networks:
+      - cs_network
+    depends_on:
+      - cs_maria_db
+
+  cs_front:
+    build:
+      dockerfile: DockerfileFront
+    container_name: cs_front
+    environment:
+     - REACT_APP_BASE_SERVER_URL=http://localhost:9000
+     - NODE_OPTIONS=--openssl-legacy-provider --max_old_space_size=2048
+    expose:
+     - "3000"
+    ports:
+      - 3000:3000
+    networks:
+      - cs_network
+    depends_on:
+      - cs_web
+    stdin_open: true
+    command: bash -c "ls && npm start"
     
