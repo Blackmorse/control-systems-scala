@@ -21,21 +21,6 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
 
   private val pdfParser = parametersService.getAllControlKeys.map(new PdfParser(_))
 
-  /**
-    * Create an Action to render an HTML page.
-    *
-    * The configuration in the `routes` file means that this method
-    * will be called when the application receives a `GET` request with
-    * a path of `/`.
-    */
-  def index() = Action { implicit request: Request[AnyContent] =>
-    Ok(views.html.index())
-  }
-
-  def parameters() = Action.async { implicit request: Request[AnyContent] =>
-    parametersService.getAllParameters.map(seq => Ok(views.html.parameters(seq)))
-  }
-
   case class DocumentIdResponse(id: Int, msg: String)
 
   object DocumentIdResponse {
@@ -43,6 +28,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
   }
 
   def uploadRest = Action.async(parse.multipartFormData) { request =>
+    println("ttest")
     request.body
       .file("file")
       .map { file =>
@@ -59,29 +45,6 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
 
             parametersService.updateDocument(document)
               .map{case(id, msg) => Ok(Json.toJson(DocumentIdResponse(id, msg)))}
-          })
-        )
-      }
-      .getOrElse(Future(InternalServerError("Some error")))
-  }
-
-  def upload = Action.async(parse.multipartFormData) { request =>
-    request.body
-      .file("file")
-      .map { file =>
-        val filename = Paths.get(file.filename).getFileName
-        //TODO in-memory
-        val path = Paths.get(s"/tmp/tmp.file")
-        file.ref.copyTo(path, replace = true)
-
-        val bytes = Files.readAllBytes(path)
-
-        parametersService.getAllControlKeys.flatMap(allControlKeys =>
-          pdfParser.flatMap(parser => {
-            val document = parser.parse(bytes, filename.toString)
-
-            parametersService.updateDocument(document)
-              .map{case(id, msg) => Ok(views.html.documentsCompare(Seq(document), allControlKeys, Some(msg)))}
           })
         )
       }

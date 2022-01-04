@@ -1,9 +1,0 @@
-@import com.blackmorse.controlsystem.model.Document
-
-@(documents: Seq[Document])
-
-@main("All documents") {
-    @common.documentList(documents)
-} {
-    <script src="@routes.Assets.versioned("react/documentList.js")" type="text/babel"></script>
-}

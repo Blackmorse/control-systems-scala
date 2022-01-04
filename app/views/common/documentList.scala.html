@@ -1,6 +1,0 @@
-@import play.api.libs.json.Json
-
-@import com.blackmorse.controlsystem.model.Document
-@(documents: Seq[Document])
-    <span id="documentData" pr="@Json.toJson(documents)"></span>
-    <div id="documentsListReact"></div>

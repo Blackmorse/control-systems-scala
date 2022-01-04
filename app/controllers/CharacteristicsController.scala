@@ -42,27 +42,6 @@ class CharacteristicsController @Inject()(val controllerComponents: ControllerCo
 
   private val characteristicsParameter = config.get[Int]("control.system.characteristics.parameter")
 
-  def characteristics() = Action.async { implicit request =>
-
-    parametersService.getAllParameters.map(parameters =>
-      Ok(views.html.characteristic.characteristics(parameters, CharacteristicsForm.form)))
-  }
-
-  def searchCharacteristics = Action.async { implicit request =>
-    CharacteristicsForm.form.bindFromRequest().fold(
-      formWithErrors => parametersService.getAllParameters.map(parameters =>
-        BadRequest(views.html.characteristic.characteristics(parameters, formWithErrors))),//Future.successful(Ok("Error")),
-      data => Future.successful(Redirect(routes.CharacteristicsController.characteristicsResult(
-        data.firstParameterId, data.firstParameterValue, data.secondParameterId, data.secondParameterValue)))
-    )
-  }
-
-  def characteristicsResult(firstParameterId: Int, firstParameterValue: String,
-                            secondParameterId: Int, secondParameterValue: String) = Action.async { implicit request =>
-
-    for (documents <- parametersService.getDocumentsByParameters(firstParameterId, firstParameterValue, secondParameterId, secondParameterValue))
-      yield Ok(views.html.characteristic.charasteristicsResult(documents, chart(documents)))
-  }
 
   def searchDocumentsWithCharts(searchParams: Seq[String]) = Action.async{ implicit  request =>
     val params = searchParams.map(searchParam => {

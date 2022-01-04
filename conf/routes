@@ -4,19 +4,11 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                           controllers.HomeController.index
-POST    /                           controllers.HomeController.upload()
 POST    /upload                     controllers.HomeController.uploadRest()
-GET     /parameters                 controllers.HomeController.parameters()
-GET     /allDocuments               controllers.DocumentsController.allDocuments()
 GET     /allDocumentsRest           controllers.DocumentsController.allDocumentsRest()
 GET     /allParameters              controllers.ParametersController.allParameters()
-GET     /characteristics            controllers.CharacteristicsController.characteristics
-POST    /searchCharacteristics      controllers.CharacteristicsController.searchCharacteristics
-GET     /searchCharacteristicsResult controllers.CharacteristicsController.characteristicsResult(firstParameterId: Int, firstParameterValue: String, secondParameterId: Int, secondParameterValue: String)
 GET     /searchDocumentsWithChart   controllers.CharacteristicsController.searchDocumentsWithCharts(searchParams: Seq[String])
 
-GET     /documentByIds              controllers.DocumentsController.documents(ids: Seq[Int])
 DELETE  /deleteDocumentById         controllers.DocumentsController.deleteDocument(id: Int)
 
 # Map static resources from the /public folder to the /assets URL path

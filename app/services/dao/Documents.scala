@@ -23,10 +23,6 @@ class DocumentsDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     dbConfig.db.run((documents returning documents.map(_.id) ) += documentEntity)
   }
 
-//  def getDocumentByName(name: String): Future[Option[DocumentEntity]] =
-//    dbConfig.db.run( documents.filter(_.name === name).take(1).result )
-//      .map(_.headOption)
-
   def getDocumentByParameters(fileNameParameters: FileNameParameters) =
     dbConfig.db.run(
       documents
@@ -37,9 +33,6 @@ class DocumentsDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
       .take(1).result
     ).map(_.headOption)
 
-  def getDocumentById(id: Int): Future[Option[DocumentEntity]] =
-    dbConfig.db.run( documents.filter(_.id === id).result ).map(_.headOption)
-
   def deleteDocumentById(id: Int) =
     dbConfig.db.run( documents.filter(_.id === id).delete )
 
@@ -47,7 +40,6 @@ class DocumentsDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     dbConfig.db.run(documents.result)
 }
 
-//case class DocumentEntity(id: Int, number: Int, name: String, date:String)
 case class DocumentEntity(id: Int, number: Int, engineNumber: Int, objectName: String,
                           objectEngineNumber: Int, lang: String, date:String, revision: Int) {
   override def toString: String = {
