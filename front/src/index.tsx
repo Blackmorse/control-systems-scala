@@ -3,11 +3,20 @@ import ReactDOM from 'react-dom';
 import './css/index.css';
 import {  Route, BrowserRouter as Router } from 'react-router-dom'
 import Characteristic from './control-systems/characteristics/characteristics'
-import Documents from './control-systems/documents/documents'
+import Documents from './control-systems/documents/Documents'
 import Load from './control-systems/load'
 import Parameters from './control-systems/parameters'
 import * as serviceWorker from './serviceWorker';
+import LoginPage from './control-systems/login/LoginPage'
+import { Store, createStore, applyMiddleware } from 'redux'
+import thunk from 'redux-thunk'
+import { LoginState, LoginAction, DispathType } from './control-systems/login/Login'
+import reducer from './control-systems/store/LoginReducer'
+import { Provider } from 'react-redux'
 
+
+const store: Store<LoginState, LoginAction> & { dispatch: DispathType } = 
+    createStore(reducer, applyMiddleware(thunk))
 
 const routing = (
   <Router>
@@ -15,11 +24,14 @@ const routing = (
       <Route exact path="/documents" component={Documents} />
       <Route exact path="/characteristics" component={Characteristic} />
       <Route exact path="/parameters" component={Parameters} />
+      <Route exact path="/login" component={LoginPage} />
   </Router>
 )
 
 ReactDOM.render(
-  routing,
+  <Provider store={store}>
+     {routing}
+  </Provider>,
   document.getElementById('root')
 );
 

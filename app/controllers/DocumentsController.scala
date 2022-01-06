@@ -9,12 +9,13 @@ import scala.concurrent.ExecutionContext
 
 class DocumentsController @Inject()(val controllerComponents: ControllerComponents,
                                     val parametersService: ParametersService,
-                                    val documentsService: DocumentsService)
+                                    val documentsService: DocumentsService,
+                                    val loggedInAction: LoggedInAction)
                                    (implicit executionContext: ExecutionContext)
     extends BaseController {
 
 
-  def deleteDocument(id: Int) = Action.async { implicit request =>
+  def deleteDocument(id: Int) = loggedInAction.async { implicit request =>
     parametersService.deleteDocument(id).map(r => Ok(""))
   }
 

@@ -1,14 +1,16 @@
 import React from 'react'
 // import './documents.css'
 import '../../css/tables.css'
-import TopPanel from '../panels/topPanel'
+import TopPanel from '../panels/TopPanel'
 import RightPanel from '../panels/rightPanel'
 import axios from 'axios';
-import DocumentList from './documentList'
+import DocumentList  from './DocumentList'
+import Document from '../models/Document'
 import DocumentsCompare from './documentsCompare'
+import { deleteDocumentById } from '../client/RestClient'
 
-class Documents extends React.Component {
-  constructor(props) {
+class Documents extends React.Component<any, any> {
+  constructor(props: any) {
     super(props)
     
     this.state = {
@@ -31,7 +33,7 @@ class Documents extends React.Component {
       })
   }
 
-  handleCheckBoxClick = docId => {
+  handleCheckBoxClick = (docId: number) => {
     if (this.state.checkedIds.has(docId)) {
       this.state.checkedIds.delete(docId)
     } else {
@@ -46,7 +48,9 @@ class Documents extends React.Component {
     if(this.state.selectedPage === "Список") {
       return
     }
-    var newState = this.state
+    var newState = {
+      ...this.state
+    }
     newState.selectedPage = "Список"
     this.setState(newState)
   }
@@ -59,20 +63,22 @@ class Documents extends React.Component {
     if (this.state.checkedIds.size === 0) {
       alert('Не выбраны документы для сравнения/просмотра')
     } else {
-      var newState = this.state
+      var newState = {
+          ...this.state
+        }
       newState.selectedPage = "Сравнение"
       this.setState(newState)
     }
   }
 
-  deleteDocument = (id) => {
-    var requestUrl = process.env.REACT_APP_BASE_SERVER_URL + '/deleteDocumentById?id=' + id
-    axios.delete(requestUrl)
-      .then(res => {
-        var newState = this.state
-        newState.documents = this.state.documents.filter(doc => doc.id !== id)
+  deleteDocument = (id: number, token: string) => {
+      deleteDocumentById(id, token, () => {
+        var newState = {
+          ...this.state
+        }
+        newState.documents = this.state.documents.filter((doc: Document) => doc.id !== id)
         this.setState(newState)
-      })
+    })
   }
 
   
@@ -93,22 +99,20 @@ class Documents extends React.Component {
       selected: this.state.selectedPage
     }
 
-    var documentProps = {
-      documents: this.state.documents,
-      checkAction: this.handleCheckBoxClick,
-      checkedIds: this.state.checkedIds,
-      deleteAction: this.deleteDocument
-    }
-
     var content
     if (this.state.selectedPage === "Список") {
-      content = <DocumentList value={documentProps} />
+      content = <DocumentList 
+        documents={this.state.documents}
+        checkedIds={this.state.checkedIds}
+        checkAction={this.handleCheckBoxClick}
+        deleteAction={this.deleteDocument}
+      />
     } else if (this.state.selectedPage === "Сравнение") {
-      var contains = (document) => {
+      var contains = (document: Document) => {
         return this.state.checkedIds.has(document.id)
       }
 
-      var selectedDocuments = this.state.documents.filter(document => contains(document))
+      var selectedDocuments = this.state.documents.filter((document: Document) => contains(document))
       content = <DocumentsCompare documents={selectedDocuments}/>
     }
 

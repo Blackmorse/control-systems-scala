@@ -1,7 +1,7 @@
 import React from 'react'
 import axios from 'axios';
 import './load.css'
-import TopPanel from './panels/topPanel'
+import TopPanel from './panels/TopPanel'
 import RightPanel from './panels/rightPanel'
 
 

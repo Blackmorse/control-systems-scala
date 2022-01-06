@@ -49,9 +49,11 @@ class CharacteristicsController @Inject()(val controllerComponents: ControllerCo
       (split(0).toInt, if(split.length > 1) split(1) else "")
     })
 
-//    implicit val writes = Json.writes[CharacteristicChart]
-
-    parametersService.getDocumentsByParameters(params.head._1, params.head._2, params(1)._1, params(1)._2)
+    parametersService.getDocumentsByParameters(
+        firstParameterId = params.head._1,
+        firstParameterValue = params.head._2,
+        secondParameterId = if (params.size < 2) 0 else params(1)._1,
+        secondParameterValue = if(params.size < 2) "" else params(1)._2)
       .map(documents => Ok(Json.toJson(chart(documents))))
   }
 

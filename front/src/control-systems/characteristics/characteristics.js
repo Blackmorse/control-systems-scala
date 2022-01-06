@@ -1,10 +1,10 @@
 import React from 'react'
 import './characteristics.css'
-import TopPanel from '../panels/topPanel'
+import TopPanel from '../panels/TopPanel'
 import RightPanel from '../panels/rightPanel'
 import axios from 'axios';
-import CharacteristicsSearchSection from './searchSection'
 import CharacteristicsChart from './characteristicsChart'
+import SearchSection from './SearchSection'
 
 class Characteristic extends React.Component {
   constructor(props) {
@@ -16,8 +16,11 @@ class Characteristic extends React.Component {
 
   onSearchClicked = (ids, values) => {
     var requestUrl = process.env.REACT_APP_BASE_SERVER_URL + '/searchDocumentsWithChart?'
+
     for (var i = 0; i < ids.length; i++) {     
-        requestUrl = requestUrl + 'searchParams=' + encodeURIComponent(ids[i] + '=' + values[i]) + '&'
+        if (ids[i] !== undefined && values[i] !== '') {
+            requestUrl = requestUrl + 'searchParams=' + encodeURIComponent(ids[i] + '=' + values[i]) + '&'
+        }
     }
     axios.get(requestUrl)
       .then(res => {
@@ -44,7 +47,7 @@ class Characteristic extends React.Component {
     }
 
     var content = (this.state.selectedPage === "Поиск") ? 
-      <CharacteristicsSearchSection searchClicked={this.onSearchClicked}/> :
+      <SearchSection onSearchClicked={(ids, values) => this.onSearchClicked(ids, values)}/> :
       <CharacteristicsChart documentCharts={this.state.documentCharts}/> 
       // <span>adasdas</span>
 

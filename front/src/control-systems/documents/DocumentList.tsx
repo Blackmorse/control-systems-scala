@@ -1,8 +1,23 @@
-import React from 'react'
+import {TypedUseSelectorHook, useSelector} from 'react-redux'
+import {LoginState} from '../login/Login'
+import Document from '../models/Document'
 
-class DocumentList extends React.Component {
+interface Props {
+    documents: Array<Document>,
+    checkedIds: Set<number>,
+    checkAction: (id: number) => void,
+    deleteAction: (id: number, token: string) => void
+}
 
-    render() {
+const DocumentList = (props: Props) =>{
+
+        const useAppSelector: TypedUseSelectorHook<LoginState> = useSelector
+
+        let stateMapFunc = (state: LoginState) => state?.login
+
+        let token = useAppSelector(stateMapFunc)?.token
+        
+        let documents: Array<Document> = props.documents as Array<Document>
         return <table className="green_table">
         <thead>
           <tr>
@@ -19,7 +34,7 @@ class DocumentList extends React.Component {
           </tr>
         </thead>
         <tbody>
-          {this.props.value.documents.map(document => {
+          {documents.map(document => {
 	  var cylindersArr = document.parameters.filter(parameter => parameter[0].code === 10003)[0]
           var cylinders = (cylindersArr !== undefined && cylindersArr.length > 1) ? cylindersArr[1] : ''
           return <tr key={"document_" + document.id}>
@@ -33,15 +48,17 @@ class DocumentList extends React.Component {
             <td>{document.fileNameParameters.revision}</td>
             
             <td><input type="checkbox"
-                      defaultChecked={this.props.value.checkedIds.has(document.id)} 
-                      onClick={() => this.props.value.checkAction(document.id)}/></td>
-            <td><a href="#" onClick={() => this.props.value.deleteAction(document.id)}>Удалить</a></td>
+                      defaultChecked={props.checkedIds.has(document.id)} 
+                      onClick={() => props.checkAction(document.id)}/></td>
+            <td>
+                {(token === undefined) ? <></> :
+                <a href="#" onClick={() => props.deleteAction(document.id, token!)}>Удалить</a>}
+            </td>
           </tr>
             
           })}
         </tbody>
       </table>
-    }
 }
 
 export default DocumentList

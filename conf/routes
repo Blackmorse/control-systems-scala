@@ -4,6 +4,8 @@
 # ~~~~
 
 # An example controller showing a sample home page
+POST     /login                      controllers.LoginController.login()
+
 POST    /upload                     controllers.HomeController.uploadRest()
 GET     /allDocumentsRest           controllers.DocumentsController.allDocumentsRest()
 GET     /allParameters              controllers.ParametersController.allParameters()
