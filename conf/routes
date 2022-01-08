@@ -4,14 +4,16 @@
 # ~~~~
 
 # An example controller showing a sample home page
-POST     /login                      controllers.LoginController.login()
+POST    /api/login                      controllers.LoginController.login()
 
-POST    /upload                     controllers.HomeController.uploadRest()
-GET     /allDocumentsRest           controllers.DocumentsController.allDocumentsRest()
-GET     /allParameters              controllers.ParametersController.allParameters()
-GET     /searchDocumentsWithChart   controllers.CharacteristicsController.searchDocumentsWithCharts(searchParams: Seq[String])
+POST    /api/upload                     controllers.HomeController.uploadRest()
+GET     /api/allDocumentsRest           controllers.DocumentsController.allDocumentsRest()
+GET     /api/allParameters              controllers.ParametersController.allParameters()
+GET     /api/searchDocumentsWithChart   controllers.CharacteristicsController.searchDocumentsWithCharts(searchParams: Seq[String])
+PUT     /api/updateParameter            controllers.ParametersController.updateParameter(id: Int, name: String, unit: String, defaultValue: String)
+POST    /api/addParameter               controllers.ParametersController.addParameter(id: Int, name: String, unit: String, defaultValue: String)
 
-DELETE  /deleteDocumentById         controllers.DocumentsController.deleteDocument(id: Int)
+DELETE  /api/deleteDocumentById         controllers.DocumentsController.deleteDocument(id: Int)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

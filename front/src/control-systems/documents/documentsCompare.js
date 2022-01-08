@@ -1,5 +1,5 @@
 import React from 'react'
-import axios from 'axios';
+import {getAllParameters} from '../client/RestClient';
 
 class DocumentsCompare extends React.Component {
     constructor(props) {
@@ -8,10 +8,8 @@ class DocumentsCompare extends React.Component {
     }
 
     componentDidMount() {
-      axios.get(process.env.REACT_APP_BASE_SERVER_URL + '/allParameters')
-        .then(res => {
-            
-            this.setState({parameters: res.data})
+        getAllParameters((res) => {
+            this.setState({parameters: res})
         })
     }
 

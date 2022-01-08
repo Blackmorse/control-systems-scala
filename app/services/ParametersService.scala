@@ -1,8 +1,9 @@
 package services
 
 import com.blackmorse.controlsystem.model.{ControlKey, Document, FileNameParameters}
+
 import javax.inject.Inject
-import services.dao.{DocumentEntity, DocumentParametersDAO, DocumentsDAO, ParametersDAO}
+import services.dao.{DocumentEntity, DocumentParametersDAO, DocumentsDAO, ParameterEntity, ParametersDAO}
 import slick.jdbc.MySQLProfile.api._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -12,7 +13,7 @@ class ParametersService @Inject() (val parametersDAO: ParametersDAO,
                                    val documentParametersDAO: DocumentParametersDAO)
                                   (implicit executionContext: ExecutionContext) {
 
-  lazy val getAllParameters = parametersDAO.getAllParameters
+  def getAllParameters = parametersDAO.getAllParameters
 
   lazy val getAllControlKeys = getAllParameters
     .map(seq => seq.map(el => el.id -> ControlKey(el.id, el.name)))
@@ -77,5 +78,13 @@ class ParametersService @Inject() (val parametersDAO: ParametersDAO,
 
   def getDocumentsParameters(documentIds: Seq[Int], parameterIds: Seq[Int]) = {
     documentParametersDAO.getDocumentsParameters(documentIds, parameterIds)
+  }
+
+  def updateParameter(parameterEntity: ParameterEntity) = {
+    parametersDAO.updateParameter(parameterEntity)
+  }
+
+  def addParameter(parameterEntity: ParameterEntity) = {
+    parametersDAO.addParameter(parameterEntity)
   }
 }

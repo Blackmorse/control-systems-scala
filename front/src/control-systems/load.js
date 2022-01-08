@@ -1,8 +1,8 @@
 import React from 'react'
-import axios from 'axios';
 import './load.css'
 import TopPanel from './panels/TopPanel'
 import RightPanel from './panels/rightPanel'
+import {uploadDocument} from './client/RestClient';
 
 
 class Load extends React.Component {
@@ -29,22 +29,20 @@ class Load extends React.Component {
   }
 
   onLoad= ()=> {
-    const data = new FormData() 
-    data.append('file', this.state.file)
-    this.setState({
-      file: this.state.file,
-      msg: 'Загрузка...'
-    })
-    axios.post(process.env.REACT_APP_BASE_SERVER_URL + "/upload", data, { // receive two parameter endpoint url ,form data 
-      })
-      .then(res => { // then print response status
-        this.setState({file: this.state.file,
-          msg: res.data.msg})
-      })
-      .catch(error => {
-        this.setState({file: this.state.file,
-          msg: 'Ошибка загрузки'})
-      })
+
+    uploadDocument(this.state.file, 
+        (res) => {
+            this.setState({
+                file: this.state.file,
+                msg: res.msg
+            })
+        }, 
+        () => {
+            this.setState({
+                file: this.state.file,
+                msg: 'Ошибка загрузки'
+            })
+        })
   }
 
     render() {

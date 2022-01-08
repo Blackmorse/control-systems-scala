@@ -3,9 +3,9 @@ import ReactDOM from 'react-dom';
 import './css/index.css';
 import {  Route, BrowserRouter as Router } from 'react-router-dom'
 import Characteristic from './control-systems/characteristics/characteristics'
-import Documents from './control-systems/documents/Documents'
+import DocumentsPage from './control-systems/documents/DocumentsPage'
 import Load from './control-systems/load'
-import Parameters from './control-systems/parameters'
+import Parameters from './control-systems/ParametersPage'
 import * as serviceWorker from './serviceWorker';
 import LoginPage from './control-systems/login/LoginPage'
 import { Store, createStore, applyMiddleware } from 'redux'
@@ -21,7 +21,7 @@ const store: Store<LoginState, LoginAction> & { dispatch: DispathType } =
 const routing = (
   <Router>
       <Route exact path="/" component={Load} />
-      <Route exact path="/documents" component={Documents} />
+      <Route exact path="/documents" component={DocumentsPage} />
       <Route exact path="/characteristics" component={Characteristic} />
       <Route exact path="/parameters" component={Parameters} />
       <Route exact path="/login" component={LoginPage} />

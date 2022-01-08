@@ -15,9 +15,25 @@ class ParametersDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   val parameters = TableQuery[ParametersTableDef]
 
   def getAllParameters: Future[Seq[ParameterEntity]] = dbConfig.db.run(parameters.result)
+
+  def updateParameter(parameterEntity: ParameterEntity) = {
+    dbConfig.db.run(
+      parameters.filter(_.id === parameterEntity.id)
+        .update(parameterEntity)
+    )
+  }
+
+  def addParameter(parameterEntity: ParameterEntity) = {
+    dbConfig.db.run(
+      parameters += parameterEntity
+    )
+  }
 }
 
-case class ParameterEntity(id: Int, name: String, unit: String, defaultValue: String)
+case class ParameterEntity(id: Int,
+                           name: String,
+                           unit: String,
+                           defaultValue: String)
 
 class ParametersTableDef(tag: Tag) extends Table[ParameterEntity](tag, "parameters") {
   def id = column[Int]("id", O.PrimaryKey)

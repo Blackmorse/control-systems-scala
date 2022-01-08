@@ -1,15 +1,13 @@
 import React from 'react'
-// import './documents.css'
 import '../../css/tables.css'
 import TopPanel from '../panels/TopPanel'
 import RightPanel from '../panels/rightPanel'
-import axios from 'axios';
 import DocumentList  from './DocumentList'
 import Document from '../models/Document'
 import DocumentsCompare from './documentsCompare'
-import { deleteDocumentById } from '../client/RestClient'
+import { allDocuments, deleteDocumentById } from '../client/RestClient'
 
-class Documents extends React.Component<any, any> {
+class DocumentsPage extends React.Component<any, any> {
   constructor(props: any) {
     super(props)
     
@@ -22,15 +20,13 @@ class Documents extends React.Component<any, any> {
   }
 
   componentDidMount() {
-    axios.get(process.env.REACT_APP_BASE_SERVER_URL + '/allDocumentsRest')
-      .then(res => {
-        
+    allDocuments((res) => {
         this.setState({
           loading: false,
           selectedPage: this.state.selectedPage,
-          documents: res.data
+          documents: res
         })
-      })
+    })
   }
 
   handleCheckBoxClick = (docId: number) => {
@@ -131,4 +127,4 @@ class Documents extends React.Component<any, any> {
   }
   }
   
-export default Documents
+export default DocumentsPage
