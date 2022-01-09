@@ -20,7 +20,8 @@ const store: Store<LoginState, LoginAction> & { dispatch: DispathType } =
 
 const routing = (
   <Router>
-      <Route exact path="/" component={Load} />
+      <Route exact path="/" component={LoginPage} />
+      <Route exact path="/load" component={Load} />
       <Route exact path="/documents" component={DocumentsPage} />
       <Route exact path="/characteristics" component={Characteristic} />
       <Route exact path="/parameters" component={Parameters} />

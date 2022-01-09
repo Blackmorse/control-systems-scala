@@ -8,3 +8,5 @@ project/metals.sbt
 *target/
 conf/application-prod.conf
 mdb_tmp/
+
+certificates/

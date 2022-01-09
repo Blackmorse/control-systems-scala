@@ -1,4 +1,3 @@
-import React from 'react'
 import {TypedUseSelectorHook, useSelector} from 'react-redux'
 import { Link } from 'react-router-dom'
 import {LoginState} from '../login/Login'
@@ -8,8 +7,6 @@ interface Props {
 }
 
 const TopPanel = (props: Props) => {
-
-
     const useAppSelector: TypedUseSelectorHook<LoginState> = useSelector
 
     let stateMapFunc = (state: LoginState) => state?.login
@@ -51,7 +48,7 @@ const TopPanel = (props: Props) => {
           </Link>
           <img className="button_link_img" src="/button/GroupButton_07_Default_TE.png" alt=""></img>
           <img className="button_link_img" src="/button/GroupButton_08_Default_TE.png" alt=""></img>
-          <Link to="/">
+          <Link to="/load">
             <img className="button_link_img" 
             src={props.pageName === "Загрузка" ? "/button/GroupButton_09_Pressed_TE.png" : "/button/GroupButton_09_Default_TE.png"} 
             alt="Загрузка"></img>

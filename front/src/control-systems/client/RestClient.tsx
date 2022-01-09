@@ -1,7 +1,6 @@
 import ax from 'axios';
 import ParameterEntity from '../models/ParameterEntity'
 import DocumentIdResponse from '../models/DocumentIdResponse'
-import {error} from 'console';
 
 const axios = ax.create({ baseURL: process.env.REACT_APP_BASE_SERVER_URL + '/api' })
 
