@@ -30,7 +30,7 @@ class CharacteristicsChart extends React.Component {
           };
 
         return (
-          <Plot className="plotly"
+          <Plot className="plotly" style={{'height': '600px'}}
             data={chartData}
             layout={layout}
           />
