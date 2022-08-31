@@ -19,7 +19,7 @@ const TopPanel = (props: Props) => {
     }
 
 
-    return <aside className="top_panel">
+    return <aside className="d-flex fluid">
         <span className="page_name">
             {props.pageName}
         </span>
